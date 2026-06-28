@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/dashboard/manager")
-@PreAuthorize("hasAnyAuthority('ROLE_MANAGER','ROLE_ADMIN')")
 @RequiredArgsConstructor
 public class ManagerWebController {
 
