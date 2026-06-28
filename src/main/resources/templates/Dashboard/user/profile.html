@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{dashboard/fragments/layout :: layout(~{::content}, 'My Profile')}">
+<body>
+<div th:fragment="content">
+
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">My Profile</h4>
+        <p class="text-muted small mb-0">Update your personal information and password</p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Update Profile Form -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-medium">
+                    <i class="bi bi-person me-2 text-primary"></i>Personal Information
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/dashboard/user/profile}"
+                          method="post"
+                          th:object="${updateRequest}">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">First Name</label>
+                            <input type="text"
+                                   th:field="*{firstName}"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                                   placeholder="First name"/>
+                            <div class="invalid-feedback small"
+                                 th:errors="*{firstName}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Last Name</label>
+                            <input type="text"
+                                   th:field="*{lastName}"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                                   placeholder="Last name"/>
+                            <div class="invalid-feedback small"
+                                 th:errors="*{lastName}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Email Address</label>
+                            <input type="email"
+                                   class="form-control bg-light"
+                                   disabled/>
+                            <div class="form-text">Email cannot be changed here.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Phone Number</label>
+                            <input type="tel"
+                                   th:field="*{phoneNumber}"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid'"
+                                   placeholder="+91XXXXXXXXXX"/>
+                            <div class="invalid-feedback small"
+                                 th:errors="*{phoneNumber}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Bio</label>
+                            <textarea th:field="*{bio}"
+                                      class="form-control"
+                                      th:classappend="${#fields.hasErrors('bio')} ? 'is-invalid'"
+                                      rows="3"
+                                      placeholder="Tell us a little about yourself..."></textarea>
+                            <div class="invalid-feedback small"
+                                 th:errors="*{bio}"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-medium small">Profile Picture URL</label>
+                            <input type="text"
+                                   th:field="*{profilePictureUrl}"
+                                   th:value="${profile.profilePictureUrl}"
+                                   class="form-control"
+                                   placeholder="https://example.com/photo.jpg"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-lg me-2"></i>Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Form -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-medium">
+                    <i class="bi bi-lock me-2 text-warning"></i>Change Password
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/dashboard/user/password}"
+                          method="post"
+                          th:object="${passwordRequest}">
+
+                        <div class="alert alert-info small py-2 mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Password must be at least 8 characters and contain
+                            uppercase, lowercase, number, and special character.
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">Current Password</label>
+                            <input type="password"
+                                   name="currentPassword"
+                                   class="form-control"
+                                   placeholder="Enter current password"
+                                   required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium small">New Password</label>
+                            <input type="password"
+                                   name="newPassword"
+                                   class="form-control"
+                                   placeholder="Enter new password"
+                                   required/>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-medium small">Confirm New Password</label>
+                            <input type="password"
+                                   name="confirmNewPassword"
+                                   class="form-control"
+                                   placeholder="Repeat new password"
+                                   required/>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="bi bi-shield-lock me-2"></i>Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Account Info card -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white fw-medium">
+                    <i class="bi bi-info-circle me-2 text-info"></i>Account Details
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 small">
+                        <div class="col-6 text-muted">Role</div>
+                        <div class="col-6">
+                            <span class="badge bg-primary"
+                                  th:text="${profile.role.name().replace('ROLE_','')}">USER</span>
+                        </div>
+                        <div class="col-6 text-muted">Member Since</div>
+                        <div class="col-6 fw-medium"
+                             th:text="${#temporals.format(profile.createdAt,'dd MMM yyyy')}">-</div>
+                        <div class="col-6 text-muted">Last Login</div>
+                        <div class="col-6 fw-medium"
+                             th:text="${profile.lastLoginAt != null ? #temporals.format(profile.lastLoginAt,'dd MMM yyyy HH:mm') : 'First login'}">-</div>
+                        <div class="col-6 text-muted">Account Status</div>
+                        <div class="col-6">
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
