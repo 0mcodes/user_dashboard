@@ -158,40 +158,92 @@
         </div>
 
         <!-- Pagination -->
-        <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+        <div class="card-footer bg-white d-flex justify-content-between
+            align-items-center flex-wrap gap-2">
+
+            <!-- Showing X to Y of Z -->
             <small class="text-muted">
                 Showing
-                <span th:text="${users.currentPage * users.pageSize + 1}">1</span>
-                –
-                <span th:text="${#numbers.min(users.currentPage * users.pageSize + users.pageSize, users.totalElements)}">10</span>
-                of <span th:text="${users.totalElements}">0</span> users
+                <span class="fw-medium"
+                      th:text="${users.currentPage * users.pageSize + 1}">1</span>
+                to
+                <span class="fw-medium"
+                      th:text="${users.currentPage * users.pageSize + users.content.size()}">10</span>
+                of
+                <span class="fw-medium"
+                      th:text="${users.totalElements}">0</span>
+                users
             </small>
-            <nav>
+
+            <!-- Page size selector -->
+            <form th:action="@{/dashboard/admin/users}"
+                  method="get"
+                  class="d-flex align-items-center gap-2">
+                <input type="hidden" name="page" value="0"/>
+                <input type="hidden" name="search"
+                       th:value="${search}"/>
+                <label class="text-muted small mb-0">Rows per page:</label>
+                <select name="size"
+                        class="form-select form-select-sm"
+                        style="width:75px;"
+                        onchange="this.form.submit()">
+                    <option value="3"
+                            th:selected="${users.pageSize == 3}">3</option>
+                    <option value="5"
+                            th:selected="${users.pageSize == 5}">5</option>
+                    <option value="10"
+                            th:selected="${users.pageSize == 10}">10</option>
+                    <option value="25"
+                            th:selected="${users.pageSize == 25}">25</option>
+                    <option value="50"
+                            th:selected="${users.pageSize == 50}">50</option>
+                </select>
+            </form>
+
+            <!-- Page number buttons -->
+            <nav aria-label="User table pagination">
                 <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item" th:classappend="${!users.hasPrevious} ? 'disabled'">
+
+                    <!-- Previous button -->
+                    <li class="page-item"
+                        th:classappend="${!users.hasPrevious} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/dashboard/admin/users(page=${users.currentPage - 1}, search=${search})}">
+                           th:href="@{/dashboard/admin/users(
+                       page=${users.currentPage - 1},
+                       size=${users.pageSize},
+                       search=${search})}">
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     </li>
+
+                    <!-- Page number buttons -->
                     <li th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}"
                         class="page-item"
                         th:classappend="${i == users.currentPage} ? 'active'">
                         <a class="page-link"
-                           th:href="@{/dashboard/admin/users(page=${i}, search=${search})}"
+                           th:href="@{/dashboard/admin/users(
+                       page=${i},
+                       size=${users.pageSize},
+                       search=${search})}"
                            th:text="${i + 1}">1</a>
                     </li>
-                    <li class="page-item" th:classappend="${!users.hasNext} ? 'disabled'">
+
+                    <!-- Next button -->
+                    <li class="page-item"
+                        th:classappend="${!users.hasNext} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{/dashboard/admin/users(page=${users.currentPage + 1}, search=${search})}">
+                           th:href="@{/dashboard/admin/users(
+                       page=${users.currentPage + 1},
+                       size=${users.pageSize},
+                       search=${search})}">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
+
                 </ul>
             </nav>
         </div>
     </div>
-
 </div>
 </body>
 </html>
