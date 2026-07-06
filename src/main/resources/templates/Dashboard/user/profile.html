@@ -108,32 +108,82 @@
                             uppercase, lowercase, number, and special character.
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-medium small">Current Password</label>
+                        <div class="input-group">
                             <input type="password"
-                                   name="currentPassword"
+                                   th:field="*{currentPassword}"
+                                   id="currentPassword"
                                    class="form-control"
-                                   placeholder="Enter current password"
-                                   required/>
+                                   th:classappend="${#fields.hasErrors('currentPassword')}
+                                   ? 'is-invalid'"
+                                   placeholder="Enter current password"/>
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    onclick="togglePassword('currentPassword', this)"
+                                    tabindex="-1">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <div class="invalid-feedback small"
+                             th:errors="*{currentPassword}"></div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-medium small">New Password</label>
+                        <div class="input-group">
                             <input type="password"
-                                   name="newPassword"
-                                   class="form-control"
-                                   placeholder="Enter new password"
-                                   required/>
+                               th:field="*{newPassword}"
+                               id="newPassword"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('newPassword')}
+                                ? 'is-invalid'"
+                               placeholder="Enter new password"/>
+                            <button type="button"
+                             class="btn btn-outline-secondary"
+                             onclick="togglePassword('newPassword', this)"
+                             tabindex="-1">
+                            <i class="bi bi-eye"></i>
+                            </button>
+                            <div class="invalid-feedback small"
+                             th:errors="*{newPassword}"></div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-medium small">Confirm New Password</label>
-                            <input type="password"
-                                   name="confirmNewPassword"
-                                   class="form-control"
-                                   placeholder="Repeat new password"
-                                   required/>
+                        <div class="mt-2 ps-1" id="passwordChecklist">
+                            <div id="chk-length"  class="check-item text-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i>
+                                At least 8 characters
+                            </div>
+                            <div id="chk-upper"   class="check-item text-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i>
+                                One uppercase letter
+                            </div>
+                            <div id="chk-lower"   class="check-item text-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i>
+                                One lowercase letter
+                            </div>
+                            <div id="chk-digit"   class="check-item text-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i>
+                                One number
+                            </div>
+                            <div id="chk-special" class="check-item text-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i>
+                                One special character (@$!%*?&amp;)
+                            </div>
                         </div>
+
+                        <div class="input-group">
+                        <input type="password"
+                            th:field="*{confirmNewPassword}"
+                            id="confirmNewPassword"
+                            class="form-control"
+                           th:classappend="${#fields.hasErrors('confirmNewPassword')}
+                           ? 'is-invalid'"
+                           placeholder="Repeat new password"/>
+                        <button type="button"
+                         class="btn btn-outline-secondary"
+                         onclick="togglePassword('confirmNewPassword', this)"
+                        tabindex="-1">
+                        <i class="bi bi-eye"></i>
+                        </button>
+                        <div class="invalid-feedback small"
+                         th:errors="*{confirmNewPassword}"></div>
+                    </div>
 
                         <button type="submit" class="btn btn-warning w-100">
                             <i class="bi bi-shield-lock me-2"></i>Change Password
@@ -171,5 +221,19 @@
 
     </div>
 </div>
+<script>
+    function togglePassword(fieldId, btn){
+        const field = document.getElementbyId(fieldId);
+        const icon = btn.querySelector('i');
+
+    if(field.type==="password"){
+        field.type='password';
+        icon.classList.replace('bi-eye','bi-eye-slash');
+    }else{
+        field.type = 'password';
+        icon.classList.replace('bi-eye-slash','bi-eye');
+        }
+    }
+</script>
 </body>
 </html>

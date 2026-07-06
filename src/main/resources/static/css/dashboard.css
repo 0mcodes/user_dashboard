@@ -163,3 +163,98 @@
         padding: 1rem !important;
     }
 }
+
+/* Password validation checklist */
+.check-item {
+    font-size: 12px;
+    line-height: 1.8;
+    transition: color 0.2s ease;
+}
+.check-item i {
+    font-size: 11px;
+    transition: all 0.2s ease;
+}
+@keyframes popIn {
+    0%   { transform: scale(0.5); }
+    70%  { transform: scale(1.2); }
+    100% { transform: scale(1.0); }
+}
+.check-item.text-success i {
+    animation: popIn 0.15s ease;
+}
+/* ── Navbar avatar (small — in the trigger button) ──────────── */
+.navbar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3B8BD4, #9C5FD7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    /*
+     * flex-shrink: 0 means this element will never
+     * shrink smaller than its defined size even if
+     * the container is too small. Without this, the
+     * avatar might squish on small screens.
+     */
+}
+
+/* ── Dropdown avatar (larger — inside the open menu) ────────── */
+.dropdown-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3B8BD4, #9C5FD7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+/* ── Dropdown menu item hover ────────────────────────────────── */
+.dropdown-menu .dropdown-item {
+    font-size: 13.5px;
+    padding-left: 16px;
+    padding-right: 16px;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* ── Dropdown trigger button hover ──────────────────────────── */
+.navbar .btn-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    text-decoration: none;
+}
+
+/* ── Dropdown animation ──────────────────────────────────────── */
+/*
+ * By default Bootstrap dropdowns appear instantly.
+ * This adds a subtle fade-in and slide-down effect
+ * making the menu feel more polished.
+ */
+.dropdown-menu {
+    animation: dropdownFadeIn 0.15s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
