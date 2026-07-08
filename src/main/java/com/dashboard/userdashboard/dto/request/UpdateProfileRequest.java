@@ -1,9 +1,13 @@
 package com.dashboard.userdashboard.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 public class UpdateProfileRequest {
@@ -26,4 +30,11 @@ public class UpdateProfileRequest {
     private String bio;
 
     private String profilePictureUrl;
+
+    @Past(message = "Date of birth must be in the past")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
+
+    @Size(max = 100, message = "Location cannot exceed 100 characters")
+    private String location;
 }

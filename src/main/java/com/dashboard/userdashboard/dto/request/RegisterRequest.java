@@ -1,10 +1,10 @@
 package com.dashboard.userdashboard.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 public class RegisterRequest {
@@ -38,4 +38,11 @@ public class RegisterRequest {
             message = "Phone number must be 10-15 digits"
     )
     private String phoneNumber;
+
+    @Past(message = "Date of birth must be in the past")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
+
+    @Size(max = 100, message = "Location cannot exceed 100 characters")
+    private String location;
 }

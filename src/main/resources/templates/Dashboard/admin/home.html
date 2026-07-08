@@ -5,151 +5,107 @@
 <body>
 <div th:fragment="content">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-header d-flex justify-content-between align-items-center">
         <div>
-            <h4 class="fw-bold mb-1">Admin Overview</h4>
-            <p class="text-muted small mb-0">System-wide statistics and quick actions</p>
+            <h1 class="page-title">Admin Overview</h1>
+            <p class="page-subtitle">System-wide statistics and quick actions</p>
         </div>
-        <a th:href="@{/dashboard/admin/users}" class="btn btn-primary btn-sm">
-            <i class="bi bi-people me-1"></i>Manage Users
+        <a th:href="@{/dashboard/admin/users}" class="btn-red">
+            <i class="bi bi-people"></i>Manage Users
         </a>
     </div>
 
-    <!-- Stats Row 1 -->
     <div class="row g-3 mb-4">
         <div class="col-sm-6 col-xl-3">
-            <div class="stat-card card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small fw-medium">Total Users</div>
-                            <div class="stat-number text-primary"
-                                 th:text="${stats.totalUsers}">0</div>
-                        </div>
-                        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="stat-card-top">
+                    <div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value" th:text="${stats.totalUsers}">0</div>
                     </div>
-                    <div class="mt-2 small text-muted">
-                        <span class="text-success fw-medium"
-                              th:text="${stats.newUsersToday}">0</span> new today
-                    </div>
+                    <div class="stat-icon stat-icon-red"><i class="bi bi-people-fill"></i></div>
+                </div>
+                <div class="stat-sub">
+                    <span style="color:#2E7D32;font-weight:600;" th:text="${stats.newUsersToday}">0</span> new today
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <div class="stat-card card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small fw-medium">Active Users</div>
-                            <div class="stat-number text-success"
-                                 th:text="${stats.activeUsers}">0</div>
-                        </div>
-                        <div class="stat-icon bg-success bg-opacity-10 text-success">
-                            <i class="bi bi-person-check-fill"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="stat-card-top">
+                    <div>
+                        <div class="stat-label">Active Users</div>
+                        <div class="stat-value" th:text="${stats.activeUsers}">0</div>
                     </div>
-                    <div class="mt-2 small text-muted">
-                        <span class="text-danger fw-medium"
-                              th:text="${stats.disabledUsers}">0</span> disabled
-                    </div>
+                    <div class="stat-icon stat-icon-green"><i class="bi bi-person-check-fill"></i></div>
+                </div>
+                <div class="stat-sub">
+                    <span style="color:#C0392B;font-weight:600;" th:text="${stats.disabledUsers}">0</span> disabled
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <div class="stat-card card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small fw-medium">Admins / Managers</div>
-                            <div class="stat-number text-danger"
-                                 th:text="${stats.totalAdmins + ' / ' + stats.totalManagers}">0</div>
-                        </div>
-                        <div class="stat-icon bg-danger bg-opacity-10 text-danger">
-                            <i class="bi bi-shield-fill"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="stat-card-top">
+                    <div>
+                        <div class="stat-label">Admins / Managers</div>
+                        <div class="stat-value" th:text="${stats.totalAdmins + ' / ' + stats.totalManagers}">0</div>
                     </div>
-                    <div class="mt-2 small text-muted">
-                        <span th:text="${stats.totalRegularUsers}">0</span> regular users
-                    </div>
+                    <div class="stat-icon stat-icon-red"><i class="bi bi-shield-fill"></i></div>
                 </div>
+                <div class="stat-sub"><span th:text="${stats.totalRegularUsers}">0</span> regular users</div>
             </div>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <div class="stat-card card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted small fw-medium">Failed Logins Today</div>
-                            <div class="stat-number text-warning"
-                                 th:text="${stats.failedLoginsToday}">0</div>
-                        </div>
-                        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                            <i class="bi bi-exclamation-triangle-fill"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="stat-card-top">
+                    <div>
+                        <div class="stat-label">Failed Logins Today</div>
+                        <div class="stat-value" th:text="${stats.failedLoginsToday}">0</div>
                     </div>
-                    <div class="mt-2 small text-muted">
-                        <span th:text="${stats.totalAuditLogs}">0</span> total audit events
-                    </div>
+                    <div class="stat-icon stat-icon-orange"><i class="bi bi-exclamation-triangle-fill"></i></div>
                 </div>
+                <div class="stat-sub"><span th:text="${stats.totalAuditLogs}">0</span> total audit events</div>
             </div>
         </div>
     </div>
 
-    <!-- Week / Month stats -->
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-3">
-                    <div class="text-muted small">New This Week</div>
-                    <div class="fs-3 fw-bold text-info"
-                         th:text="${stats.newUsersThisWeek}">0</div>
-                </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-label">New Today</div>
+                <div class="stat-value mt-1" style="font-size:24px;color:#2E7D32;" th:text="${stats.newUsersToday}">0</div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-3">
-                    <div class="text-muted small">New This Month</div>
-                    <div class="fs-3 fw-bold text-primary"
-                         th:text="${stats.newUsersThisMonth}">0</div>
-                </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-label">New This Week</div>
+                <div class="stat-value mt-1" style="font-size:24px;color:#1565C0;" th:text="${stats.newUsersThisWeek}">0</div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-3">
-                    <div class="text-muted small">Locked Accounts</div>
-                    <div class="fs-3 fw-bold text-danger"
-                         th:text="${stats.lockedUsers}">0</div>
-                </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-label">New This Month</div>
+                <div class="stat-value mt-1" style="font-size:24px;color:#C0392B;" th:text="${stats.newUsersThisMonth}">0</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-label">Locked Accounts</div>
+                <div class="stat-value mt-1" style="font-size:24px;color:#C0392B;" th:text="${stats.lockedUsers}">0</div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Links -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white fw-medium">Quick Actions</div>
-        <div class="card-body">
-            <div class="d-flex flex-wrap gap-2">
-                <a th:href="@{/dashboard/admin/users}"
-                   class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-people me-1"></i>View All Users
-                </a>
-                <a th:href="@{/dashboard/admin/audit-logs}"
-                   class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-journal-text me-1"></i>Audit Logs
-                </a>
-                <a href="/h2-console" target="_blank"
-                   class="btn btn-outline-dark btn-sm">
-                    <i class="bi bi-database me-1"></i>H2 Database Console
-                </a>
-                <a href="/swagger-ui.html" target="_blank"
-                   class="btn btn-outline-info btn-sm">
-                    <i class="bi bi-code-slash me-1"></i>API Documentation
-                </a>
-            </div>
+    <div class="app-card">
+        <div class="app-card-header">
+            <h2 class="app-card-title">Quick Actions</h2>
+        </div>
+        <div class="app-card-body d-flex flex-wrap gap-2">
+            <a th:href="@{/dashboard/admin/users}" class="btn-red"><i class="bi bi-people"></i>View All Users</a>
+            <a th:href="@{/dashboard/admin/audit-logs}" class="btn-ghost"><i class="bi bi-journal-text"></i>Audit Logs</a>
+            <a href="/h2-console" target="_blank" class="btn-ghost"><i class="bi bi-database"></i>H2 Console</a>
+            <a href="/swagger-ui.html" target="_blank" class="btn-ghost"><i class="bi bi-code-slash"></i>API Docs</a>
         </div>
     </div>
 

@@ -1,713 +1,225 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--
-    xmlns:th="http://www.thymeleaf.org"
-    ─────────────────────────────────────
-    This declares the Thymeleaf namespace.
-    It tells the HTML parser that any attribute
-    starting with "th:" is a Thymeleaf expression,
-    not a standard HTML attribute.
-    Without this, th:if, th:text, th:href etc.
-    would be treated as invalid HTML and ignored.
--->
 <head>
     <meta charset="UTF-8"/>
-    <!--
-        charset="UTF-8"
-        ───────────────
-        UTF-8 is a character encoding that supports
-        every character in every language — Hindi,
-        Arabic, Chinese, emoji, everything.
-        Without this, special characters display as garbage.
-        Always declare it as the FIRST tag in <head>
-        so the browser knows the encoding before
-        parsing any other content.
-    -->
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0"/>
-    <!--
-        viewport meta tag
-        ─────────────────
-        Makes the page responsive on mobile devices.
-        Without this, mobile browsers zoom out to show
-        the full desktop layout, making text tiny.
-        width=device-width  = page width equals screen width
-        initial-scale=1.0   = no zoom on first load
-        Essential for any modern web page.
-    -->
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Login — User Dashboard</title>
-
-    <!--
-        Bootstrap CSS
-        ─────────────
-        Bootstrap is a CSS framework — a pre-written
-        collection of CSS classes.
-        Instead of writing:
-            .btn { padding: 8px 16px; border-radius: 4px; ... }
-        You just write: class="btn btn-primary"
-        Bootstrap handles all the styling.
-
-        We load it from a CDN (Content Delivery Network) —
-        a server geographically close to the user that
-        serves the file fast.
-        cdnjs.cloudflare.com is Cloudflare's CDN —
-        one of the largest and most reliable in the world.
-    -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
-          rel="stylesheet"/>
-
-    <!--
-        Bootstrap Icons
-        ───────────────
-        A separate icon library from Bootstrap.
-        Gives you 1800+ icons as CSS classes.
-        Usage: <i class="bi bi-eye"></i>
-        The "bi" prefix = Bootstrap Icons.
-        We use: bi-eye, bi-eye-slash, bi-lock,
-                bi-envelope, bi-box-arrow-in-right
-    -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
-          rel="stylesheet"/>
-
-    <!--
-        Page-specific CSS
-        ─────────────────
-        This page doesn't use dashboard.css (that's
-        only for pages inside the layout).
-        We write CSS specific to the login page inline
-        using a <style> block.
-    -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
     <style>
-        /*
-         * body styles
-         * ───────────
-         * linear-gradient creates a smooth colour
-         * transition from one colour to another.
-         * 135deg = diagonal direction (top-left to bottom-right)
-         * #0d1117 = very dark navy (GitHub's dark background)
-         * #161b22 = slightly lighter dark navy
-         * min-height: 100vh = at least full viewport height
-         * vh = viewport height unit. 100vh = 100% of screen height.
-         */
+        * { box-sizing: border-box; }
         body {
-            background: linear-gradient(135deg,
-                        #0d1117 0%,
-                        #161b22 100%);
+            background: linear-gradient(135deg, #C0392B 0%, #96281B 100%);
             min-height: 100vh;
-        }
-
-        /*
-         * .auth-card
-         * ──────────
-         * The white card that contains the login form.
-         * border-radius: 16px = rounded corners
-         * box-shadow = drop shadow beneath the card
-         *   0 = horizontal offset
-         *   20px = vertical offset (shadow below)
-         *   60px = blur radius (how spread out the shadow is)
-         *   rgba(0,0,0,.3) = black at 30% opacity
-         */
-        .auth-card {
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,.3);
-        }
-
-        /*
-         * .brand-icon
-         * ───────────
-         * The blue square with the grid icon at the top.
-         * display: flex + align-items + justify-content
-         * = centers the icon both horizontally and vertically.
-         * This is the modern CSS Flexbox centering technique.
-         */
-        .brand-icon {
-            width: 56px;
-            height: 56px;
-            background: #3B8BD4;
-            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            color: white;
-            margin: 0 auto;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 20px;
         }
-
-        /*
-         * .demo-credentials
-         * ─────────────────
-         * The grey box at the bottom showing demo accounts.
-         * font-size: 12px = smaller than normal text
-         * line-height: 1.7 = 1.7× the font size = spacing
-         *   between lines (easier to read)
-         */
-        .demo-credentials {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 12px;
-            line-height: 1.7;
+        .auth-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 36px;
         }
-
-        /*
-         * .toggle-password
-         * ────────────────
-         * Removes the default Bootstrap outline
-         * and border from the eye button so it blends
-         * with the input group cleanly.
-         */
-        .toggle-password {
-            border-left: 0;
-            background: white;
+        .brand-icon {
+            width: 52px; height: 52px;
+            background: #C0392B;
+            border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white;
+            margin: 0 auto 16px;
         }
-
-        .toggle-password:hover {
-            background: #f8f9fa;
+        .auth-title {
+            font-size: 22px; font-weight: 700;
+            color: #212121; text-align: center; margin-bottom: 4px;
         }
-
-        /*
-         * .form-control:focus
-         * ───────────────────
-         * When an input is focused (user clicked it),
-         * Bootstrap adds a blue outline by default.
-         * We customise the box-shadow to match our
-         * brand colour (#3B8BD4) at low opacity.
-         * box-shadow: 0 0 0 3px = 3px glow around the input
-         */
-        .form-control:focus {
-            border-color: #3B8BD4;
-            box-shadow: 0 0 0 3px rgba(59, 139, 212, 0.15);
+        .auth-sub {
+            font-size: 13px; color: #9E9E9E;
+            text-align: center; margin-bottom: 28px;
         }
-
-        /*
-         * .input-group-text
-         * ─────────────────
-         * The icon boxes on the left of inputs.
-         * border-right: 0 removes the border between
-         * the icon box and the input, making them look
-         * like one seamless element.
-         */
-        .input-group-text {
-            border-right: 0;
+        .form-label {
+            font-size: 13px; font-weight: 600;
+            color: #616161; margin-bottom: 6px;
         }
-
-        /*
-         * .input-group .form-control
-         * ──────────────────────────
-         * Removes the left border of the input when
-         * it's inside an input-group (because the icon
-         * box provides the left border).
-         * This creates the seamless joined look.
-         */
-        .input-group .form-control {
-            border-left: 0;
+        .input-wrap {
+            display: flex; align-items: stretch;
+            border: 1.5px solid #E0E0E0; border-radius: 8px;
+            overflow: hidden; transition: border-color .18s;
         }
+        .input-wrap:focus-within {
+            border-color: #C0392B;
+            box-shadow: 0 0 0 3px rgba(192,57,43,.12);
+        }
+        .input-icon {
+            display: flex; align-items: center;
+            padding: 0 12px;
+            background: #FAFAFA;
+            color: #9E9E9E; font-size: 15px;
+            border-right: 1px solid #E0E0E0;
+        }
+        .input-wrap input {
+            flex: 1; border: none; outline: none;
+            padding: 10px 12px; font-size: 13.5px;
+            color: #212121; background: #fff;
+        }
+        .eye-btn {
+            display: flex; align-items: center;
+            padding: 0 12px; border: none;
+            background: #fff; color: #9E9E9E;
+            cursor: pointer; font-size: 15px;
+            border-left: 1px solid #E0E0E0;
+            transition: color .15s;
+        }
+        .eye-btn:hover { color: #C0392B; }
+        .btn-submit {
+            width: 100%; padding: 11px;
+            background: #C0392B; color: white;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: background .18s;
+            display: flex; align-items: center;
+            justify-content: center; gap: 8px;
+        }
+        .btn-submit:hover { background: #96281B; }
+        .forgot-link {
+            font-size: 12px; color: #C0392B;
+            text-decoration: none; font-weight: 600;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+        .divider { border-color: #F0F0F0; margin: 20px 0; }
+        .register-text {
+            text-align: center; font-size: 13px; color: #9E9E9E;
+        }
+        .register-link {
+            color: #C0392B; font-weight: 600; text-decoration: none;
+        }
+        .register-link:hover { text-decoration: underline; }
+        .flash-error {
+            background: #FDEDEC; border: 1px solid #F1948A;
+            border-radius: 8px; padding: 10px 14px;
+            color: #C0392B; font-size: 13px;
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 18px;
+        }
+        .flash-success {
+            background: #E8F5E9; border: 1px solid #A5D6A7;
+            border-radius: 8px; padding: 10px 14px;
+            color: #2E7D32; font-size: 13px;
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 18px;
+        }
+        .demo-box {
+            background: #FAFAFA; border: 1px solid #F0F0F0;
+            border-radius: 10px; padding: 14px 16px;
+            margin-top: 20px;
+        }
+        .demo-title {
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .06em;
+            color: #9E9E9E; margin-bottom: 8px;
+        }
+        .demo-row {
+            display: flex; align-items: center;
+            gap: 8px; margin-bottom: 5px; font-size: 12px;
+        }
+        .demo-row:last-child { margin-bottom: 0; }
+        .demo-badge {
+            font-size: 10px; font-weight: 700;
+            padding: 2px 7px; border-radius: 10px;
+        }
+        .badge-admin { background: #FDEDEC; color: #C0392B; }
+        .badge-mgr   { background: #FFF8E1; color: #F57F17; }
+        .badge-user  { background: #F5F5F5; color: #616161; }
+        .demo-cred   { color: #616161; }
+        .demo-pw     { color: #9E9E9E; }
+        .mb-3 { margin-bottom: 16px; }
+        .mb-4 { margin-bottom: 22px; }
     </style>
 </head>
+<body>
+<div class="auth-card">
 
-<body class="d-flex align-items-center justify-content-center">
-<!--
-    class="d-flex align-items-center justify-content-center"
-    ──────────────────────────────────────────────────────────
-    Bootstrap Flexbox utility classes.
-    d-flex            = display: flex
-    align-items-center    = center children vertically
-    justify-content-center = center children horizontally
-
-    Combined with min-height: 100vh on body,
-    this perfectly centers the login card on the screen
-    both vertically and horizontally — regardless of
-    screen size. The modern, correct way to center in CSS.
--->
-
-<div class="container">
-    <!--
-        .container
-        ──────────
-        Bootstrap's responsive container.
-        Sets a max-width that changes at different
-        screen sizes (breakpoints):
-        < 576px  = full width (mobile)
-        ≥ 576px  = 540px max
-        ≥ 768px  = 720px max
-        ≥ 992px  = 960px max
-        ≥ 1200px = 1140px max
-        Centers itself with auto margins.
-    -->
-
-    <div class="row justify-content-center">
-        <!--
-            Bootstrap Grid System
-            ─────────────────────
-            Bootstrap divides the screen into 12 columns.
-            .row = a horizontal container for columns
-            justify-content-center = center the columns
-
-            The grid is responsive — you can specify
-            different column widths for different screen sizes.
-        -->
-
-        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
-            <!--
-                Responsive column widths:
-                col-12    = 12/12 = full width on tiny screens
-                col-sm-8  = 8/12 = 66% width on small screens (≥576px)
-                col-md-6  = 6/12 = 50% width on medium (≥768px)
-                col-lg-5  = 5/12 = 41% width on large (≥992px)
-                col-xl-4  = 4/12 = 33% width on xlarge (≥1200px)
-
-                On a laptop the card takes up 1/3 of the screen.
-                On mobile it's full width. Perfect responsive design.
-            -->
-
-            <div class="card auth-card border-0 p-4">
-                <!--
-                    .card  = Bootstrap card component
-                    border-0 = removes the default card border
-                    p-4 = padding: 1.5rem on all sides
-                    (Bootstrap spacing: p-1=0.25rem, p-2=0.5rem,
-                     p-3=1rem, p-4=1.5rem, p-5=3rem)
-                -->
-
-                <!-- ── HEADER ─────────────────────────────── -->
-                <div class="text-center mb-4">
-                    <!--
-                        text-center = text-align: center
-                        mb-4 = margin-bottom: 1.5rem
-                    -->
-
-                    <div class="brand-icon mb-3">
-                        <i class="bi bi-grid-3x3-gap-fill"></i>
-                        <!--
-                            Bootstrap Icons syntax:
-                            First "bi" = the icon library
-                            Second "bi-grid-3x3-gap-fill" = specific icon
-                            Icons are rendered as font characters —
-                            no image files needed, scales perfectly,
-                            inherits CSS color.
-                        -->
-                    </div>
-
-                    <h4 class="fw-bold mb-1">Welcome back</h4>
-                    <!--
-                        fw-bold = font-weight: bold
-                        mb-1 = margin-bottom: 0.25rem
-                    -->
-
-                    <p class="text-muted small mb-0">
-                        Sign in to your dashboard
-                    </p>
-                    <!--
-                        text-muted = grey text color
-                        small = font-size: 0.875em (slightly smaller)
-                        mb-0 = margin-bottom: 0 (removes default
-                               paragraph bottom margin)
-                    -->
-                </div>
-
-                <!-- ── FLASH MESSAGES ─────────────────────── -->
-                <!--
-                    th:if="${error}"
-                    ────────────────
-                    Thymeleaf conditional rendering.
-                    Only adds this div to the HTML if the
-                    'error' attribute exists in the Model.
-                    AuthWebController adds it when
-                    ?error=true is in the URL (failed login).
-
-                    th:text="${error}"
-                    ──────────────────
-                    Sets the text content of this element
-                    to the value of 'error' from the Model.
-                    Thymeleaf HTML-escapes the value automatically —
-                    prevents XSS (Cross-Site Scripting) attacks where
-                    a malicious user might inject HTML via the URL.
-                -->
-                <div th:if="${error}"
-                     class="alert alert-danger d-flex
-                            align-items-center gap-2 py-2 small"
-                     role="alert">
-                    <i class="bi bi-exclamation-triangle-fill
-                               flex-shrink-0"></i>
-                    <span th:text="${error}"></span>
-                </div>
-
-                <div th:if="${message}"
-                     class="alert alert-success d-flex
-                            align-items-center gap-2 py-2 small"
-                     role="alert">
-                    <i class="bi bi-check-circle-fill flex-shrink-0"></i>
-                    <span th:text="${message}"></span>
-                </div>
-
-                <!-- ── LOGIN FORM ─────────────────────────── -->
-                <!--
-                    th:action="@{/login}"
-                    ─────────────────────
-                    @{} is Thymeleaf's URL expression.
-                    It adds the application's context path prefix.
-                    If your app runs at /myapp, @{/login} becomes
-                    /myapp/login automatically.
-                    Always use @{} for URLs — never hardcode paths.
-
-                    method="post"
-                    ─────────────
-                    Spring Security's form login processor
-                    ONLY listens for POST requests on the
-                    loginProcessingUrl (/login).
-                    A GET to /login shows the login PAGE.
-                    A POST to /login processes the credentials.
-                    This is standard REST semantics.
-                -->
-                <form th:action="@{/login}" method="post">
-
-                    <!-- Email field -->
-                    <div class="mb-3">
-                        <label for="username"
-                               class="form-label fw-medium small">
-                            Email address
-                        </label>
-                        <!--
-                            for="username"
-                            ──────────────
-                            The label's 'for' attribute must match
-                            the input's 'id'. Clicking the label
-                            focuses the input — improves usability
-                            especially on mobile (bigger click target).
-                            This is called label association and is
-                            required for accessibility (screen readers).
-                        -->
-
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="bi bi-envelope
-                                          text-muted"></i>
-                            </span>
-                            <input type="email"
-                                   id="username"
-                                   name="username"
-                                   class="form-control"
-                                   placeholder="you@example.com"
-                                   autocomplete="email"
-                                   required
-                                   autofocus/>
-                            <!--
-                                name="username"
-                                ───────────────
-                                CRITICAL. Spring Security's form
-                                login processor looks specifically
-                                for a field named "username".
-                                If you name it "email", Spring Security
-                                finds no credentials and authentication
-                                silently fails with a 401/403.
-
-                                id="username"
-                                ─────────────
-                                Links this input to the label above
-                                via the label's for="username".
-
-                                autocomplete="email"
-                                ────────────────────
-                                Tells the browser this field holds
-                                an email address. The browser's
-                                autocomplete/password manager knows
-                                to suggest saved emails.
-
-                                required
-                                ────────
-                                HTML5 attribute. Browser validates
-                                the field is not empty before
-                                submitting the form. Client-side only —
-                                server validates too (@NotBlank).
-
-                                autofocus
-                                ─────────
-                                Browser automatically focuses this
-                                input when the page loads. User can
-                                start typing immediately without
-                                clicking first. Improves UX.
-                            -->
-                        </div>
-                    </div>
-
-                    <!-- Password field -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between
-                                    align-items-center mb-1">
-                            <label for="password"
-                                   class="form-label fw-medium
-                                          small mb-0">
-                                Password
-                            </label>
-                            <a th:href="@{/forgot-password}"
-                               class="small text-primary
-                                      text-decoration-none">
-                                Forgot password?
-                            </a>
-                        </div>
-
-                        <!--
-                            input-group
-                            ───────────
-                            Joins three elements side by side:
-                            1. Lock icon on the left
-                            2. Password input in the middle
-                            3. Eye toggle button on the right
-
-                            Bootstrap handles the border-radius:
-                            only the leftmost element gets
-                            left-rounded corners, only the rightmost
-                            gets right-rounded corners.
-                            Middle elements have no rounding.
-                        -->
-                        <div class="input-group">
-
-                            <!-- Lock icon — left side -->
-                            <span class="input-group-text bg-light">
-                                <i class="bi bi-lock text-muted"></i>
-                            </span>
-
-                            <!--
-                                THE PASSWORD INPUT
-                                ──────────────────
-                                id="password"
-                                    Links to label for="password"
-
-                                name="password"
-                                    Spring Security looks for this
-                                    field name specifically.
-                                    MUST be "password".
-
-                                type="password"
-                                    Browser renders dots instead
-                                    of characters. The JavaScript
-                                    togglePassword function switches
-                                    this between "password" and "text".
-                            -->
-                            <input type="password"
-                                   id="password"
-                                   name="password"
-                                   class="form-control"
-                                   placeholder="Enter your password"
-                                   autocomplete="current-password"
-                                   required/>
-
-                            <!--
-                                THE EYE TOGGLE BUTTON
-                                ──────────────────────
-                                type="button"
-                                    CRITICAL. Without this, any
-                                    <button> inside a <form> defaults
-                                    to type="submit". Clicking the eye
-                                    would submit the form and try to
-                                    login instead of showing the password.
-                                    type="button" makes it a plain button
-                                    with no form submission behaviour.
-
-                                onclick="togglePassword('password', this)"
-                                    Calls our function when clicked.
-                                    'password' = the id of the input
-                                    this = the button element itself
-                                    (so the function can find and
-                                    swap the icon inside it)
-
-                                tabindex="-1"
-                                    Removes the button from the
-                                    keyboard Tab order.
-                                    Normal Tab flow: email → password → submit
-                                    Without tabindex="-1":
-                                    email → password → eye button → submit
-                                    The eye button is a visual aid,
-                                    not a meaningful form element.
-                                    Keyboard and screen reader users
-                                    should not have to Tab through it.
-
-                                aria-label
-                                    Describes the button for screen readers.
-                                    Visually impaired users hear:
-                                    "Toggle password visibility, button"
-                                    Instead of just hearing nothing.
-                            -->
-                            <button type="button"
-                                    class="btn btn-outline-secondary
-                                           toggle-password"
-                                    onclick="togglePassword('password',
-                                                            this)"
-                                    tabindex="-1"
-                                    aria-label="Toggle password visibility">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Submit button -->
-                    <button type="submit"
-                            class="btn btn-primary w-100 py-2
-                                   fw-medium">
-                        <!--
-                            w-100 = width: 100% (full width of card)
-                            py-2  = padding top+bottom: 0.5rem
-                                    makes the button taller
-                            fw-medium = font-weight: 500
-                        -->
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Sign In
-                    </button>
-                </form>
-
-                <!-- ── DIVIDER ─────────────────────────────── -->
-                <hr class="my-3"/>
-                <!--
-                    my-3 = margin top and bottom: 1rem
-                    <hr> = horizontal rule — a visual divider line
-                -->
-
-                <!-- ── REGISTER LINK ──────────────────────── -->
-                <p class="text-center text-muted small mb-3">
-                    Don't have an account?
-                    <a th:href="@{/register}"
-                       class="text-primary text-decoration-none
-                              fw-medium">
-                        Register here
-                    </a>
-                </p>
-
-                <!-- ── DEMO CREDENTIALS ───────────────────── -->
-                <!--
-                    This section shows demo account details.
-                    Useful for portfolio / resume projects so
-                    interviewers can immediately try the app
-                    without creating an account.
-
-                    In a real production app, remove this section.
-                -->
-                <div class="demo-credentials">
-                    <div class="fw-medium text-muted mb-2">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Demo accounts
-                    </div>
-                    <div>
-                        <span class="badge bg-danger me-2">Admin</span>
-                        admin@dashboard.com
-                        <span class="text-muted">/ Admin@123</span>
-                    </div>
-                    <div class="mt-1">
-                        <span class="badge bg-warning text-dark me-2">
-                            Manager
-                        </span>
-                        manager@dashboard.com
-                        <span class="text-muted">/ Manager@123</span>
-                    </div>
-                    <div class="mt-1">
-                        <span class="badge bg-info text-dark me-2">
-                            User
-                        </span>
-                        rahul@dashboard.com
-                        <span class="text-muted">/ User@1234</span>
-                    </div>
-                </div>
-
-            </div>
-            <!-- end .card -->
-
-        </div>
-        <!-- end .col -->
-
+    <div class="brand-icon">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
     </div>
-    <!-- end .row -->
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-sub">Sign in to your dashboard</div>
+
+    <div th:if="${error}" class="flash-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${error}"></span>
+    </div>
+    <div th:if="${message}" class="flash-success">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${message}"></span>
+    </div>
+
+    <form th:action="@{/login}" method="post">
+
+        <div class="mb-3">
+            <label class="form-label">Email Address</label>
+            <div class="input-wrap">
+                <div class="input-icon"><i class="bi bi-envelope"></i></div>
+                <input type="email" name="username"
+                       placeholder="you@example.com"
+                       autocomplete="email" required autofocus/>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <label class="form-label" style="margin:0;">Password</label>
+                <a th:href="@{/forgot-password}" class="forgot-link">Forgot password?</a>
+            </div>
+            <div class="input-wrap">
+                <div class="input-icon"><i class="bi bi-lock"></i></div>
+                <input type="password" name="password" id="loginPwd"
+                       placeholder="Enter your password"
+                       autocomplete="current-password" required/>
+                <button type="button" class="eye-btn"
+                        onclick="togglePassword('loginPwd',this)" tabindex="-1">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="bi bi-box-arrow-in-right"></i>Sign In
+        </button>
+    </form>
+
+    <hr class="divider"/>
+    <p class="register-text">
+        Don't have an account?
+        <a th:href="@{/register}" class="register-link">Register here</a>
+    </p>
+
+    <div class="demo-box">
+        <div class="demo-title"><i class="bi bi-info-circle me-1"></i>Demo Accounts</div>
+        <div class="demo-row">
+            <span class="demo-badge badge-admin">Admin</span>
+            <span class="demo-cred">admin@dashboard.com</span>
+            <span class="demo-pw">/ Admin@123</span>
+        </div>
+        <div class="demo-row">
+            <span class="demo-badge badge-mgr">Manager</span>
+            <span class="demo-cred">manager@dashboard.com</span>
+            <span class="demo-pw">/ Manager@123</span>
+        </div>
+        <div class="demo-row">
+            <span class="demo-badge badge-user">User</span>
+            <span class="demo-cred">rahul@dashboard.com</span>
+            <span class="demo-pw">/ User@1234</span>
+        </div>
+    </div>
 
 </div>
-<!-- end .container -->
 
-<!--
-    Bootstrap JS
-    ─────────────
-    Must be loaded AFTER the HTML content (before </body>).
-    Uses the "bundle" version which includes Popper.js —
-    required for dropdowns, tooltips, and modals.
-    Without this: Bootstrap components like dropdowns
-    and collapsible navbars won't work.
--->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
-<!--
-    togglePassword function
-    ────────────────────────
-    Must be defined AFTER Bootstrap JS loads
-    (in case it interferes) and BEFORE </body>.
-
-    Why inline here and not in dashboard.js?
-    ─────────────────────────────────────────
-    dashboard.js is loaded by layout.html — the base
-    template used by all dashboard pages.
-    The login page is a standalone auth page — it has
-    its own complete <html> document and does NOT
-    include layout.html. So dashboard.js is never
-    loaded on this page.
-
-    We define the function inline here.
-    Exact same function as in dashboard.js — just
-    declared locally for this page.
-
-    Could we link dashboard.js directly?
-    Yes: <script th:src="@{/js/dashboard.js}"></script>
-    But that would load ALL dashboard functions on a
-    public page that doesn't need them.
-    Inline is cleaner for a single-function need.
--->
-<script>
-    /**
-     * togglePassword
-     * ──────────────
-     * Switches a password field between hidden (dots)
-     * and visible (plain text) mode.
-     * Also swaps the eye icon to match the current state.
-     *
-     * @param {string}      fieldId - the id="" of the input field
-     * @param {HTMLElement} btn     - the button that was clicked
-     *
-     * HOW IT WORKS:
-     * An <input type="password"> renders characters as dots.
-     * Changing type to "text" shows them as plain text.
-     * Changing back to "password" hides them again.
-     * This is a standard browser behaviour — we just
-     * control which type attribute is active.
-     */
-    function togglePassword(fieldId, btn) {
-
-        // Step 1: Find the input element by its id
-        // document.getElementById returns the DOM element
-        // or null if no element with that id exists
-        const field = document.getElementById(fieldId);
-
-        // Step 2: Find the <i> icon element inside the button
-        // btn.querySelector('i') searches for the first <i>
-        // element that is a child of btn
-        const icon = btn.querySelector('i');
-
-        // Step 3: Toggle the input type and icon class
-        if (field.type === 'password') {
-
-            // Currently hidden — switch to visible
-            field.type = 'text';
-
-            // Replace the "eye open" icon with "eye crossed out"
-            // classList.replace(oldClass, newClass) swaps one
-            // CSS class for another in one operation
-            icon.classList.replace('bi-eye', 'bi-eye-slash');
-
-        } else {
-
-            // Currently visible — switch back to hidden
-            field.type = 'password';
-
-            // Replace "eye crossed out" back to "eye open"
-            icon.classList.replace('bi-eye-slash', 'bi-eye');
-        }
-    }
-</script>
-
+<script th:src="@{/js/auth.js}"></script>
 </body>
 </html>

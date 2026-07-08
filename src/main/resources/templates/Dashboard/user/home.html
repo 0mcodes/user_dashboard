@@ -4,26 +4,28 @@
 <body>
 <div th:fragment="content">
 
-    <div class="mb-4">
-        <h4 class="fw-bold mb-1">Welcome, <span th:text="${profile.firstName}">User</span>!</h4>
-        <p class="text-muted small mb-0">Here's a summary of your account</p>
+    <div class="page-header">
+        <h1 class="page-title">Welcome back, <span th:text="${profile.firstName}">User</span>!</h1>
+        <p class="page-subtitle">Here's a summary of your account</p>
     </div>
 
-    <!-- Profile card -->
     <div class="row g-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center py-4">
-                    <div class="avatar-circle-lg mx-auto mb-3"
-                         th:text="${#strings.substring(profile.firstName,0,1) + #strings.substring(profile.lastName,0,1)}">??</div>
-                    <h5 class="fw-bold mb-1" th:text="${profile.fullName}">Name</h5>
-                    <p class="text-muted small mb-2" th:text="${profile.email}">email</p>
-                    <span class="badge bg-primary mb-3"
+            <div class="app-card h-100">
+                <div class="app-card-body text-center" style="padding:32px 20px;">
+                    <div class="avatar avatar-xl mx-auto mb-3"
+                         th:text="${#strings.substring(profile.firstName,0,1)+#strings.substring(profile.lastName,0,1)}">??</div>
+                    <h5 class="fw-700 mb-1 fs-14" th:text="${profile.fullName}">Name</h5>
+                    <p class="fs-13 mb-2" style="color:#9E9E9E;" th:text="${profile.email}">email</p>
+                    <span class="role-badge mb-3 d-inline-block"
+                          th:classappend="${profile.role.name()=='ROLE_ADMIN'} ? 'role-admin' :
+                                         (${profile.role.name()=='ROLE_MANAGER'} ? 'role-manager' : 'role-user')"
                           th:text="${profile.role.name().replace('ROLE_','')}">USER</span>
-                    <p th:if="${profile.bio}" class="text-muted small"
-                       th:text="${profile.bio}"></p>
-                    <a th:href="@{/dashboard/user/profile}"
-                       class="btn btn-outline-primary btn-sm mt-2">
+                    <p th:if="${profile.bio}" class="fs-13 mt-2 mb-0" style="color:#616161;" th:text="${profile.bio}"></p>
+                    <p th:if="${profile.location}" class="fs-12 mt-1 mb-0" style="color:#9E9E9E;">
+                        <i class="bi bi-geo-alt me-1"></i><span th:text="${profile.location}"></span>
+                    </p>
+                    <a th:href="@{/dashboard/user/profile}" class="btn-red-outline d-inline-flex mt-3" style="padding:6px 14px;font-size:12px;">
                         <i class="bi bi-pencil me-1"></i>Edit Profile
                     </a>
                 </div>
@@ -31,66 +33,67 @@
         </div>
 
         <div class="col-md-8">
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white fw-medium small">Account Information</div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-sm-6">
-                                    <div class="text-muted small">First Name</div>
-                                    <div class="fw-medium" th:text="${profile.firstName}">-</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="text-muted small">Last Name</div>
-                                    <div class="fw-medium" th:text="${profile.lastName}">-</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="text-muted small">Email</div>
-                                    <div class="fw-medium" th:text="${profile.email}">-</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="text-muted small">Phone</div>
-                                    <div class="fw-medium"
-                                         th:text="${profile.phoneNumber != null ? profile.phoneNumber : 'Not set'}">-</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="text-muted small">Account Status</div>
-                                    <span class="badge bg-success">Active</span>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="text-muted small">Member Since</div>
-                                    <div class="fw-medium"
-                                         th:text="${#temporals.format(profile.createdAt,'dd MMM yyyy')}">-</div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="text-muted small">Last Login</div>
-                                    <div class="fw-medium"
-                                         th:text="${profile.lastLoginAt != null ? #temporals.format(profile.lastLoginAt,'dd MMM yyyy HH:mm') : 'First login'}">-</div>
-                                </div>
+            <div class="app-card mb-3">
+                <div class="app-card-header">
+                    <h2 class="app-card-title">Account Information</h2>
+                </div>
+                <div class="app-card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">First Name</div>
+                            <div class="fw-600 fs-13 mt-1" th:text="${profile.firstName}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Last Name</div>
+                            <div class="fw-600 fs-13 mt-1" th:text="${profile.lastName}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Email</div>
+                            <div class="fw-600 fs-13 mt-1" th:text="${profile.email}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Phone</div>
+                            <div class="fw-600 fs-13 mt-1" th:text="${profile.phoneNumber != null ? profile.phoneNumber : 'Not set'}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Location</div>
+                            <div class="fw-600 fs-13 mt-1" th:text="${profile.location != null ? profile.location : 'Not set'}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Date of Birth</div>
+                            <div class="fw-600 fs-13 mt-1"
+                                 th:text="${profile.dateOfBirth != null ? #temporals.format(profile.dateOfBirth,'dd MMM yyyy') : 'Not set'}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Member Since</div>
+                            <div class="fw-600 fs-13 mt-1" th:text="${#temporals.format(profile.createdAt,'dd MMM yyyy')}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Last Login</div>
+                            <div class="fw-600 fs-13 mt-1"
+                                 th:text="${profile.lastLoginAt != null ? #temporals.format(profile.lastLoginAt,'dd MMM yyyy, hh:mm a') : 'This is your first login'}">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="fs-12" style="color:#9E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Status</div>
+                            <div class="mt-1">
+                                <span class="status-badge status-active"><span class="status-dot dot-active"></span>Active</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white fw-medium small">Quick Actions</div>
-                        <div class="card-body d-flex flex-wrap gap-2">
-                            <a th:href="@{/dashboard/user/profile}"
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-person me-1"></i>Edit Profile
-                            </a>
-                            <a th:href="@{/dashboard/user/profile}"
-                               class="btn btn-outline-warning btn-sm">
-                                <i class="bi bi-lock me-1"></i>Change Password
-                            </a>
-                        </div>
-                    </div>
+            <div class="app-card">
+                <div class="app-card-header"><h2 class="app-card-title">Quick Actions</h2></div>
+                <div class="app-card-body d-flex flex-wrap gap-2">
+                    <a th:href="@{/dashboard/user/profile}" class="btn-red"><i class="bi bi-person"></i>Edit Profile</a>
+                    <a th:href="@{/dashboard/user/profile}" class="btn-ghost"><i class="bi bi-lock"></i>Change Password</a>
+                    <a th:href="@{/dashboard/user/users}" class="btn-ghost"><i class="bi bi-people"></i>View All Users</a>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 </body>
 </html>

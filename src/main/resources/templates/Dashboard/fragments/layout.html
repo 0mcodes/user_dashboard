@@ -6,63 +6,184 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="${pageTitle} + ' — Dashboard'">Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
-          rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
-          rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
     <link th:href="@{/css/dashboard.css}" rel="stylesheet"/>
 </head>
-<body class="bg-light">
+<body>
 
-<!-- Navbar -->
-<div th:replace="~{dashboard/fragments/navbar :: navbar}"></div>
-
-<div class="d-flex" style="padding-top:56px;">
-
-    <!-- Sidebar -->
-    <div th:replace="~{dashboard/fragments/sidebar :: sidebar}"></div>
-
-    <!-- Main content -->
-    <main class="main-content flex-grow-1 p-4">
-
-        <!-- Success flash -->
-        <div th:if="${message}"
-             class="alert alert-success alert-dismissible fade show"
-             role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <span th:text="${message}"></span>
-            <button type="button" class="btn-close"
-                    data-bs-dismiss="alert"></button>
+<!-- ═══════════════ NAVBAR ═══════════════ -->
+<nav class="app-navbar">
+    <a class="navbar-brand" th:href="@{/dashboard/redirect}">
+        <div class="navbar-brand-icon">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
         </div>
+        <span class="d-none d-md-inline">UserDashboard</span>
+    </a>
 
-        <!-- Error flash -->
-        <div th:if="${error}"
-             class="alert alert-danger alert-dismissible fade show"
-             role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close"
-                    data-bs-dismiss="alert"></button>
+    <div class="navbar-right">
+        <span sec:authorize="hasAuthority('ROLE_ADMIN')"
+              class="navbar-badge badge-admin">ADMIN</span>
+        <span sec:authorize="hasAuthority('ROLE_MANAGER')"
+              class="navbar-badge badge-manager">MANAGER</span>
+        <span sec:authorize="hasAuthority('ROLE_USER') and !hasAuthority('ROLE_ADMIN') and !hasAuthority('ROLE_MANAGER')"
+              class="navbar-badge badge-user">USER</span>
+
+        <!-- User dropdown -->
+        <div class="dropdown">
+            <button class="navbar-user-btn dropdown-toggle-none"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="border:none;cursor:pointer;">
+                <div class="navbar-avatar"
+                     th:with="fn=${#authentication.getPrincipal().firstName},ln=${#authentication.getPrincipal().lastName}"
+                     th:text="${#strings.substring(fn,0,1)+#strings.substring(ln,0,1)}">??</div>
+                <span class="d-none d-lg-inline fs-13"
+                      th:text="${#authentication.getPrincipal().firstName}">User</span>
+                <i class="bi bi-chevron-down" style="font-size:10px;opacity:.7;"></i>
+            </button>
+
+            <ul class="dropdown-menu navbar-dropdown dropdown-menu-end">
+                <!-- Header -->
+                <li>
+                    <div class="navbar-dropdown-header"
+                         th:with="fn=${#authentication.getPrincipal().firstName},
+                                  ln=${#authentication.getPrincipal().lastName},
+                                  em=${#authentication.getPrincipal().email},
+                                  ro=${#authentication.getPrincipal().role}">
+                        <div class="navbar-dropdown-avatar"
+                             th:text="${#strings.substring(fn,0,1)+#strings.substring(ln,0,1)}">??</div>
+                        <div>
+                            <div class="navbar-dropdown-name"
+                                 th:text="${fn+' '+ln}">Name</div>
+                            <div class="navbar-dropdown-email"
+                                 th:text="${em}">email</div>
+                            <div class="navbar-dropdown-role"
+                                 th:text="${ro.name().replace('ROLE_','')}">USER</div>
+                        </div>
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider my-0"></li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/dashboard/user/home}">
+                        <i class="bi bi-house text-muted"></i>My Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/dashboard/user/profile}">
+                        <i class="bi bi-person text-muted"></i>Edit Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/dashboard/user/profile}">
+                        <i class="bi bi-lock text-muted"></i>Change Password
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider my-0"></li>
+                <li>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="bi bi-box-arrow-right"></i>Sign Out
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
+    </div>
+</nav>
 
-        <!-- Password error flash -->
-        <div th:if="${passwordError}"
-             class="alert alert-danger alert-dismissible fade show"
-             role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span th:text="${passwordError}"></span>
-            <button type="button" class="btn-close"
-                    data-bs-dismiss="alert"></button>
+<!-- ═══════════════ BODY WRAPPER ═══════════════ -->
+<div style="display:flex;">
+
+    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <aside class="app-sidebar">
+        <div class="sidebar-inner">
+
+            <!-- ADMIN -->
+            <div sec:authorize="hasAuthority('ROLE_ADMIN')">
+                <div class="sidebar-section-label">Admin Controls</div>
+                <a th:href="@{/dashboard/admin/home}" class="sidebar-link"
+                   th:classappend="${currentUri.contains('/admin/home')} ? 'active'">
+                    <i class="bi bi-speedometer2"></i>Overview
+                </a>
+                <a th:href="@{/dashboard/admin/users}" class="sidebar-link"
+                   th:classappend="${currentUri.contains('/admin/users')} ? 'active'">
+                    <i class="bi bi-people"></i>Manage Users
+                </a>
+                <a th:href="@{/dashboard/admin/audit-logs}" class="sidebar-link"
+                   th:classappend="${currentUri.contains('/admin/audit')} ? 'active'">
+                    <i class="bi bi-journal-text"></i>Audit Logs
+                </a>
+                <a href="/h2-console" target="_blank" class="sidebar-link sidebar-link-external">
+                    <i class="bi bi-database"></i>H2 Database
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                <a href="/swagger-ui.html" target="_blank" class="sidebar-link sidebar-link-external">
+                    <i class="bi bi-code-slash"></i>API Docs
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- MANAGER ONLY -->
+            <div sec:authorize="hasAuthority('ROLE_MANAGER')">
+                <div class="sidebar-section-label">Manager</div>
+                <a th:href="@{/dashboard/manager/home}" class="sidebar-link"
+                   th:classappend="${currentUri.contains('/manager/home')} ? 'active'">
+                    <i class="bi bi-bar-chart"></i>Overview
+                </a>
+                <a th:href="@{/dashboard/manager/users}" class="sidebar-link"
+                   th:classappend="${currentUri.contains('/manager/users')} ? 'active'">
+                    <i class="bi bi-person-check"></i>Team Users
+                </a>
+            </div>
+
+            <!-- ALL ROLES -->
+            <div class="sidebar-section-label">My Account</div>
+            <a th:href="@{/dashboard/user/home}" class="sidebar-link"
+               th:classappend="${currentUri.contains('/user/home')} ? 'active'">
+                <i class="bi bi-house"></i>Home
+            </a>
+            <a th:href="@{/dashboard/user/profile}" class="sidebar-link"
+               th:classappend="${currentUri.contains('/user/profile')} ? 'active'">
+                <i class="bi bi-person"></i>Profile &amp; Password
+            </a>
+            <a th:href="@{/dashboard/user/users}" class="sidebar-link"
+               th:classappend="${currentUri.contains('/user/users')} ? 'active'">
+                <i class="bi bi-people"></i>View Users
+            </a>
         </div>
+    </aside>
 
-        <!-- Page content injected here -->
-        <th:block th:replace="${content}"/>
+    <!-- ═══════════════ MAIN ═══════════════ -->
+    <main class="app-main">
+        <div class="app-main-inner">
 
+            <!-- Flash alerts -->
+            <div th:if="${message}" class="flash-success">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${message}"></span>
+                <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+            <div th:if="${error}" class="flash-error">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span th:text="${error}"></span>
+                <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+            <div th:if="${passwordError}" class="flash-error">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span th:text="${passwordError}"></span>
+                <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+
+            <!-- Page content -->
+            <th:block th:replace="${content}"/>
+
+        </div>
     </main>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/dashboard.js}"></script>
-
 </body>
 </html>

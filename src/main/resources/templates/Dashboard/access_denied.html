@@ -3,16 +3,15 @@
       th:replace="~{dashboard/fragments/layout :: layout(~{::content}, 'Access Denied')}">
 <body>
 <div th:fragment="content">
-    <div class="text-center py-5">
-        <div class="mb-4" style="font-size:80px;">🚫</div>
-        <h2 class="fw-bold text-danger mb-2">Access Denied</h2>
-        <p class="text-muted mb-4">
+    <div style="text-align:center;padding:80px 20px;">
+        <div style="font-size:72px;margin-bottom:16px;">🚫</div>
+        <h2 style="font-size:24px;font-weight:700;color:#C0392B;margin-bottom:8px;">Access Denied</h2>
+        <p style="color:#9E9E9E;font-size:14px;margin-bottom:24px;">
             You don't have permission to view this page.<br/>
-            Contact your administrator if you think this is wrong.
+            Contact your administrator if you believe this is a mistake.
         </p>
-        <a th:href="@{/dashboard/redirect}"
-           class="btn btn-primary">
-            <i class="bi bi-house me-2"></i>Go to My Dashboard
+        <a th:href="@{/dashboard/redirect}" class="btn-red" style="padding:10px 24px;">
+            <i class="bi bi-house"></i>Go to My Dashboard
         </a>
     </div>
 </div>

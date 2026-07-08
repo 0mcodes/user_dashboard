@@ -1,10 +1,3 @@
-// Auto-dismiss flash alerts after 4 seconds
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.flash-success, .flash-error').forEach(function (el) {
-        setTimeout(function () { el.remove(); }, 4000);
-    });
-});
-
 function togglePassword(fieldId, btn) {
     const field = document.getElementById(fieldId);
     const icon  = btn.querySelector('i');

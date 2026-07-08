@@ -7,107 +7,269 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
     <style>
-        body { background: linear-gradient(135deg,#0d1117 0%,#161b22 100%); min-height:100vh; }
-        .auth-card { border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
-        .brand-icon { width:56px; height:56px; background:#1D9E75; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; color:white; }
+        * { box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #C0392B 0%, #96281B 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 30px 20px;
+        }
+        .auth-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25);
+            width: 100%;
+            max-width: 520px;
+            padding: 36px;
+        }
+        .brand-icon {
+            width: 52px; height: 52px;
+            background: #C0392B;
+            border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white;
+            margin: 0 auto 14px;
+        }
+        .auth-title {
+            font-size: 22px; font-weight: 700;
+            color: #212121; text-align: center; margin-bottom: 4px;
+        }
+        .auth-sub {
+            font-size: 13px; color: #9E9E9E;
+            text-align: center; margin-bottom: 28px;
+        }
+        .form-label {
+            font-size: 13px; font-weight: 600;
+            color: #616161; margin-bottom: 6px; display: block;
+        }
+        .input-wrap {
+            display: flex; align-items: stretch;
+            border: 1.5px solid #E0E0E0; border-radius: 8px;
+            overflow: hidden; transition: border-color .18s;
+        }
+        .input-wrap:focus-within {
+            border-color: #C0392B;
+            box-shadow: 0 0 0 3px rgba(192,57,43,.12);
+        }
+        .input-wrap.is-invalid { border-color: #C0392B; }
+        .input-icon {
+            display: flex; align-items: center;
+            padding: 0 12px; background: #FAFAFA;
+            color: #9E9E9E; font-size: 15px;
+            border-right: 1px solid #E0E0E0;
+        }
+        .input-wrap input, .input-wrap textarea, .input-wrap select {
+            flex: 1; border: none; outline: none;
+            padding: 10px 12px; font-size: 13.5px;
+            color: #212121; background: #fff;
+            font-family: inherit;
+        }
+        .eye-btn {
+            display: flex; align-items: center;
+            padding: 0 12px; border: none;
+            background: #fff; color: #9E9E9E;
+            cursor: pointer; font-size: 15px;
+            border-left: 1px solid #E0E0E0;
+            transition: color .15s;
+        }
+        .eye-btn:hover { color: #C0392B; }
+        .plain-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13.5px;
+            color: #212121;
+            outline: none;
+            transition: border-color .18s;
+            font-family: inherit;
+        }
+        .plain-input:focus {
+            border-color: #C0392B;
+            box-shadow: 0 0 0 3px rgba(192,57,43,.12);
+        }
+        .form-error {
+            font-size: 12px; color: #C0392B;
+            margin-top: 4px; display: block;
+        }
+        .check-item {
+            font-size: 12px; line-height: 1.9;
+            color: #C0392B;
+            transition: color .2s ease;
+        }
+        .check-item i { font-size: 11px; transition: all .2s ease; }
+        .check-item.pass { color: #2E7D32; }
+        @keyframes popIn {
+            0%   { transform: scale(.6); }
+            70%  { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+        .check-item.pass i { animation: popIn .2s ease; }
+        .btn-submit {
+            width: 100%; padding: 11px;
+            background: #C0392B; color: white;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: background .18s;
+            display: flex; align-items: center;
+            justify-content: center; gap: 8px;
+            margin-top: 8px;
+        }
+        .btn-submit:hover { background: #96281B; }
+        .flash-error {
+            background: #FDEDEC; border: 1px solid #F1948A;
+            border-radius: 8px; padding: 10px 14px;
+            color: #C0392B; font-size: 13px;
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 18px;
+        }
+        .divider { border-color: #F0F0F0; margin: 20px 0 16px; }
+        .signin-text { text-align: center; font-size: 13px; color: #9E9E9E; }
+        .signin-link { color: #C0392B; font-weight: 600; text-decoration: none; }
+        .signin-link:hover { text-decoration: underline; }
+        .optional-tag { color: #9E9E9E; font-weight: 400; font-size: 11px; }
     </style>
 </head>
-<body class="d-flex align-items-center justify-content-center py-5">
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card auth-card border-0 p-4">
+<body>
+<div class="auth-card">
 
-                <div class="text-center mb-4">
-                    <div class="brand-icon mx-auto mb-3">
-                        <i class="bi bi-person-plus-fill"></i>
-                    </div>
-                    <h4 class="fw-bold mb-1">Create account</h4>
-                    <p class="text-muted small">Join the dashboard today</p>
-                </div>
-
-                <div th:if="${error}"
-                     class="alert alert-danger py-2 small">
-                    <i class="bi bi-exclamation-triangle me-1"></i>
-                    <span th:text="${error}"></span>
-                </div>
-
-                <form th:action="@{/register}" method="post"
-                      th:object="${registerRequest}">
-
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <label class="form-label fw-medium small">First Name</label>
-                            <input type="text" th:field="*{firstName}"
-                                   class="form-control"
-                                   th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
-                                   placeholder="First name"/>
-                            <div class="invalid-feedback small"
-                                 th:errors="*{firstName}"></div>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label fw-medium small">Last Name</label>
-                            <input type="text" th:field="*{lastName}"
-                                   class="form-control"
-                                   th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
-                                   placeholder="Last name"/>
-                            <div class="invalid-feedback small"
-                                 th:errors="*{lastName}"></div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-medium small">Email</label>
-                            <input type="email" th:field="*{email}"
-                                   class="form-control"
-                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
-                                   placeholder="you@example.com"/>
-                            <div class="invalid-feedback small"
-                                 th:errors="*{email}"></div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-medium small">Phone Number</label>
-                            <input type="tel" th:field="*{phoneNumber}"
-                                   class="form-control"
-                                   th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid'"
-                                   placeholder="+91XXXXXXXXXX"/>
-                            <div class="invalid-feedback small"
-                                 th:errors="*{phoneNumber}"></div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-medium small">Password</label>
-                            <input type="password" th:field="*{password}"
-                                   class="form-control"
-                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
-                                   placeholder="Min 8 chars, upper, lower, digit, special"/>
-                            <div class="invalid-feedback small"
-                                 th:errors="*{password}"></div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-medium small">Confirm Password</label>
-                            <input type="password" th:field="*{confirmPassword}"
-                                   class="form-control"
-                                   th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
-                                   placeholder="Repeat password"/>
-                            <div class="invalid-feedback small"
-                                 th:errors="*{confirmPassword}"></div>
-                        </div>
-                    </div>
-
-                    <button type="submit"
-                            class="btn btn-success w-100 py-2 fw-medium mt-4">
-                        <i class="bi bi-person-check me-2"></i>Create Account
-                    </button>
-                </form>
-
-                <p class="text-center text-muted small mt-3 mb-0">
-                    Already have an account?
-                    <a th:href="@{/login}"
-                       class="text-primary text-decoration-none fw-medium">
-                        Sign in
-                    </a>
-                </p>
-            </div>
-        </div>
+    <div class="brand-icon">
+        <i class="bi bi-person-plus-fill"></i>
     </div>
+    <div class="auth-title">Create your account</div>
+    <div class="auth-sub">Join the dashboard today</div>
+
+    <div th:if="${error}" class="flash-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <form th:action="@{/register}" method="post" th:object="${registerRequest}">
+
+        <div class="row g-3">
+
+            <div class="col-6">
+                <label class="form-label">First Name</label>
+                <input type="text" th:field="*{firstName}"
+                       class="plain-input"
+                       th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                       placeholder="First name"/>
+                <span class="form-error" th:if="${#fields.hasErrors('firstName')}"
+                      th:errors="*{firstName}"></span>
+            </div>
+
+            <div class="col-6">
+                <label class="form-label">Last Name</label>
+                <input type="text" th:field="*{lastName}"
+                       class="plain-input"
+                       th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                       placeholder="Last name"/>
+                <span class="form-error" th:if="${#fields.hasErrors('lastName')}"
+                      th:errors="*{lastName}"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Email Address</label>
+                <div class="input-wrap" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+                    <div class="input-icon"><i class="bi bi-envelope"></i></div>
+                    <input type="email" th:field="*{email}"
+                           placeholder="you@example.com" autocomplete="email"/>
+                </div>
+                <span class="form-error" th:if="${#fields.hasErrors('email')}"
+                      th:errors="*{email}"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Phone Number</label>
+                <div class="input-wrap" th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid'">
+                    <div class="input-icon"><i class="bi bi-telephone"></i></div>
+                    <input type="tel" th:field="*{phoneNumber}" placeholder="+91XXXXXXXXXX"/>
+                </div>
+                <span class="form-error" th:if="${#fields.hasErrors('phoneNumber')}"
+                      th:errors="*{phoneNumber}"></span>
+            </div>
+
+            <div class="col-6">
+                <label class="form-label">
+                    Date of Birth <span class="optional-tag">(optional)</span>
+                </label>
+                <input type="date" th:field="*{dateOfBirth}"
+                       class="plain-input"
+                       th:max="${#temporals.format(T(java.time.LocalDate).now(),'yyyy-MM-dd')}"/>
+                <span class="form-error" th:if="${#fields.hasErrors('dateOfBirth')}"
+                      th:errors="*{dateOfBirth}"></span>
+            </div>
+
+            <div class="col-6">
+                <label class="form-label">
+                    Location <span class="optional-tag">(optional)</span>
+                </label>
+                <div class="input-wrap">
+                    <div class="input-icon"><i class="bi bi-geo-alt"></i></div>
+                    <input type="text" th:field="*{location}" placeholder="City, Country"/>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Password</label>
+                <div class="input-wrap" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+                    <div class="input-icon"><i class="bi bi-lock"></i></div>
+                    <input type="password" th:field="*{password}" id="regPassword"
+                           placeholder="Create a strong password"
+                           autocomplete="new-password"
+                           oninput="validatePassword(this.value)"/>
+                    <button type="button" class="eye-btn"
+                            onclick="togglePassword('regPassword',this)" tabindex="-1">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <span class="form-error" th:if="${#fields.hasErrors('password')}"
+                      th:errors="*{password}"></span>
+                <div style="margin-top:8px;padding-left:2px;">
+                    <div id="chk-length" class="check-item"><i class="bi bi-x-circle-fill me-1"></i>At least 8 characters</div>
+                    <div id="chk-upper"  class="check-item"><i class="bi bi-x-circle-fill me-1"></i>One uppercase letter (A-Z)</div>
+                    <div id="chk-lower"  class="check-item"><i class="bi bi-x-circle-fill me-1"></i>One lowercase letter (a-z)</div>
+                    <div id="chk-digit"  class="check-item"><i class="bi bi-x-circle-fill me-1"></i>One number (0-9)</div>
+                    <div id="chk-special" class="check-item"><i class="bi bi-x-circle-fill me-1"></i>One special character (@$!%*?&amp;)</div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Confirm Password</label>
+                <div class="input-wrap" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'">
+                    <div class="input-icon"><i class="bi bi-lock-fill"></i></div>
+                    <input type="password" th:field="*{confirmPassword}" id="confirmPassword"
+                           placeholder="Repeat your password"
+                           autocomplete="new-password"/>
+                    <button type="button" class="eye-btn"
+                            onclick="togglePassword('confirmPassword',this)" tabindex="-1">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <span class="form-error" th:if="${#fields.hasErrors('confirmPassword')}"
+                      th:errors="*{confirmPassword}"></span>
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="bi bi-person-check"></i>Create Account
+        </button>
+
+    </form>
+
+    <hr class="divider"/>
+    <p class="signin-text">
+        Already have an account?
+        <a th:href="@{/login}" class="signin-link">Sign in</a>
+    </p>
+
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/auth.js}"></script>
 </body>
 </html>

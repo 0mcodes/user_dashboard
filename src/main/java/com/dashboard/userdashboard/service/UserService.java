@@ -41,6 +41,15 @@ public class UserService {
     // ── GET PROFILE ───────────────────────────────────────────────
     @Transactional(readOnly = true)
     public UserResponse getProfile(Long userId) {
+        /*
+         * findById returns Optional<User>.
+         * orElseThrow unwraps it or throws AppException if not found.
+         * UserResponse.fromUser() converts the entity to a safe DTO
+         * (excludes the password hash).
+         *
+         * Every call to this method hits the database for fresh data.
+         * No caching — profile data must always be current.
+         */
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new AppException("User not found", HttpStatus.NOT_FOUND));
@@ -60,6 +69,8 @@ public class UserService {
         user.setPhoneNumber(request.getPhoneNumber());
         user.setBio(request.getBio());
         user.setProfilePictureUrl(request.getProfilePictureUrl());
+        user.setDateOfBirth(request.getDateOfBirth());    // ADD
+        user.setLocation(request.getLocation());
 
         User saved = userRepository.save(user);
 

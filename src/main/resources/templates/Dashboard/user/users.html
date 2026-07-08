@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{dashboard/fragments/layout :: layout(~{::content}, 'Team Users')}">
+      th:replace="~{dashboard/fragments/layout :: layout(~{::content}, 'All Users')}">
 <body>
 <div th:fragment="content">
 
     <div class="page-header">
-        <h1 class="page-title">Team Users</h1>
-        <p class="page-subtitle">View and promote team members</p>
+        <h1 class="page-title">All Users</h1>
+        <p class="page-subtitle">View only — contact admin for any changes</p>
     </div>
 
     <div class="app-card mb-4">
         <div class="search-bar">
-            <form th:action="@{/dashboard/manager/users}" method="get" class="d-flex gap-2 flex-wrap align-items-center">
+            <form th:action="@{/dashboard/user/users}" method="get" class="d-flex gap-2 flex-wrap align-items-center">
                 <div class="search-input-wrap">
                     <i class="bi bi-search"></i>
                     <input type="text" name="search" th:value="${search}" class="search-input" placeholder="Search by name or email..."/>
                 </div>
                 <button type="submit" class="btn-red" style="padding:7px 14px;"><i class="bi bi-search"></i>Search</button>
-                <a th:href="@{/dashboard/manager/users}" class="btn-ghost" style="padding:7px 14px;"><i class="bi bi-x-lg"></i>Clear</a>
+                <a th:href="@{/dashboard/user/users}" class="btn-ghost" style="padding:7px 14px;"><i class="bi bi-x-lg"></i>Clear</a>
             </form>
         </div>
     </div>
@@ -27,12 +27,12 @@
             <table class="app-table">
                 <thead>
                 <tr>
-                    <th>User</th>
+                    <th>Name</th>
+                    <th>Email</th>
                     <th>Role</th>
                     <th>Status</th>
                     <th>Location</th>
-                    <th>Joined</th>
-                    <th style="text-align:right;padding-right:20px;">Actions</th>
+                    <th>Member Since</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,12 +41,10 @@
                         <div class="d-flex align-items-center gap-3">
                             <div class="avatar avatar-sm"
                                  th:text="${#strings.substring(user.firstName,0,1)+#strings.substring(user.lastName,0,1)}">??</div>
-                            <div>
-                                <div class="fw-600 fs-13" th:text="${user.fullName}">Name</div>
-                                <div style="font-size:11px;color:#9E9E9E;" th:text="${user.email}">email</div>
-                            </div>
+                            <span class="fw-600 fs-13" th:text="${user.fullName}">Name</span>
                         </div>
                     </td>
+                    <td class="fs-13" th:text="${user.email}">email</td>
                     <td>
                             <span th:switch="${user.role.name()}">
                                 <span th:case="'ROLE_ADMIN'" class="role-badge role-admin">ADMIN</span>
@@ -64,23 +62,6 @@
                     </td>
                     <td class="fs-13" th:text="${user.location != null ? user.location : '—'}">—</td>
                     <td class="fs-13" style="color:#9E9E9E;" th:text="${#temporals.format(user.createdAt,'dd MMM yyyy')}">—</td>
-                    <td style="text-align:right;padding-right:20px;">
-                        <div class="d-flex gap-2 justify-content-end">
-                            <form th:if="${user.role.name() == 'ROLE_USER'}"
-                                  th:action="@{/dashboard/manager/users/{id}/promote(id=${user.id})}"
-                                  method="post" class="m-0">
-                                <button type="submit" class="btn-red-outline"
-                                        style="padding:5px 10px;font-size:12px;"
-                                        onclick="return confirm('Promote this user to Manager?')">
-                                    <i class="bi bi-arrow-up-circle"></i>Promote
-                                </button>
-                            </form>
-                            <a th:href="@{/dashboard/manager/audit-logs/{id}(id=${user.id})}"
-                               class="btn-ghost" style="padding:5px 8px;font-size:13px;">
-                                <i class="bi bi-journal-text"></i>
-                            </a>
-                        </div>
-                    </td>
                 </tr>
                 <tr th:if="${users.content.empty}">
                     <td colspan="6" style="text-align:center;padding:48px;color:#9E9E9E;">
@@ -95,15 +76,15 @@
             <span class="fs-13" style="color:#9E9E9E;"><strong th:text="${users.totalElements}">0</strong> users</span>
             <div class="pagination-custom">
                 <a class="page-btn" th:classappend="${!users.hasPrevious} ? 'disabled'"
-                   th:href="@{/dashboard/manager/users(page=${users.currentPage-1},size=${users.pageSize})}">
+                   th:href="@{/dashboard/user/users(page=${users.currentPage-1},size=${users.pageSize})}">
                     <i class="bi bi-chevron-left"></i>
                 </a>
                 <a th:each="i : ${#numbers.sequence(0,users.totalPages-1)}" class="page-btn"
                    th:classappend="${i==users.currentPage} ? 'active'"
-                   th:href="@{/dashboard/manager/users(page=${i},size=${users.pageSize})}"
+                   th:href="@{/dashboard/user/users(page=${i},size=${users.pageSize})}"
                    th:text="${i+1}">1</a>
                 <a class="page-btn" th:classappend="${!users.hasNext} ? 'disabled'"
-                   th:href="@{/dashboard/manager/users(page=${users.currentPage+1},size=${users.pageSize})}">
+                   th:href="@{/dashboard/user/users(page=${users.currentPage+1},size=${users.pageSize})}">
                     <i class="bi bi-chevron-right"></i>
                 </a>
             </div>

@@ -1,79 +1,81 @@
-<!-- AUDIT LOGS PAGE -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{dashboard/fragments/layout :: layout(~{::content}, 'Audit Logs')}">
 <body>
 <div th:fragment="content">
-    <div class="mb-4">
-        <h4 class="fw-bold mb-1">Audit Logs</h4>
-        <p class="text-muted small mb-0">Complete system event trail</p>
+
+    <div class="page-header">
+        <h1 class="page-title">Audit Logs</h1>
+        <p class="page-subtitle">Complete system event trail</p>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 small">
-                    <thead class="table-dark">
-                    <tr>
-                        <th class="ps-4">Timestamp</th>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Description</th>
-                        <th>IP Address</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="log : ${logs.content}">
-                        <td class="ps-4 text-muted"
-                            th:text="${#temporals.format(log.createdAt,'dd MMM yyyy HH:mm')}">-</td>
-                        <td th:text="${log.userEmail != null ? log.userEmail : 'Anonymous'}">-</td>
-                        <td>
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle"
-                                      th:text="${log.action}">ACTION</span>
-                        </td>
-                        <td th:text="${log.description}">-</td>
-                        <td class="text-muted" th:text="${log.ipAddress}">-</td>
-                        <td>
-                                <span th:if="${log.success}"
-                                      class="badge bg-success-subtle text-success">Success</span>
-                            <span th:unless="${log.success}"
-                                  class="badge bg-danger-subtle text-danger">Failed</span>
-                        </td>
-                    </tr>
-                    <tr th:if="${logs.content.empty}">
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="bi bi-journal-x fs-1 d-block mb-2"></i>No audit logs found
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+    <div class="app-card">
+        <div class="table-responsive">
+            <table class="app-table">
+                <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Description</th>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="log : ${logs.content}">
+                    <td class="fs-12" style="color:#9E9E9E;white-space:nowrap;"
+                        th:text="${#temporals.format(log.createdAt,'dd MMM yyyy, HH:mm')}">—</td>
+                    <td class="fs-13" th:text="${log.userEmail != null ? log.userEmail : 'Anonymous'}">—</td>
+                    <td>
+                            <span style="display:inline-block;padding:3px 9px;border-radius:20px;
+                                         font-size:11px;font-weight:700;
+                                         background:#FDEDEC;color:#C0392B;border:1px solid #F1948A;"
+                                  th:text="${log.action}">ACTION</span>
+                    </td>
+                    <td class="fs-13" th:text="${log.description}">—</td>
+                    <td class="fs-12" style="color:#9E9E9E;" th:text="${log.ipAddress}">—</td>
+                    <td>
+                            <span th:if="${log.success}" class="status-badge status-active">
+                                <span class="status-dot dot-active"></span>Success
+                            </span>
+                        <span th:unless="${log.success}" class="status-badge status-disabled">
+                                <span class="status-dot dot-disabled"></span>Failed
+                            </span>
+                    </td>
+                </tr>
+                <tr th:if="${logs.content.empty}">
+                    <td colspan="6" style="text-align:center;padding:48px;color:#9E9E9E;">
+                        <i class="bi bi-journal-x" style="font-size:40px;display:block;margin-bottom:8px;"></i>
+                        No audit logs found
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="padding:14px 20px;border-top:1px solid #EEE;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <span class="fs-13" style="color:#9E9E9E;">
+                Page <strong th:text="${logs.number + 1}">1</strong>
+                of <strong th:text="${logs.totalPages}">1</strong>
+                — <strong th:text="${logs.totalElements}">0</strong> total events
+            </span>
+            <div class="pagination-custom">
+                <a class="page-btn" th:classappend="${!logs.hasPrevious()} ? 'disabled'"
+                   th:href="@{/dashboard/admin/audit-logs(page=${logs.number-1})}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+                <a th:each="i : ${#numbers.sequence(0,logs.totalPages-1)}" class="page-btn"
+                   th:classappend="${i==logs.number} ? 'active'"
+                   th:href="@{/dashboard/admin/audit-logs(page=${i})}"
+                   th:text="${i+1}">1</a>
+                <a class="page-btn" th:classappend="${!logs.hasNext()} ? 'disabled'"
+                   th:href="@{/dashboard/admin/audit-logs(page=${logs.number+1})}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
             </div>
         </div>
-        <div class="card-footer bg-white d-flex justify-content-between align-items-center">
-            <small class="text-muted">
-                Page <span th:text="${logs.number + 1}">1</span>
-                of <span th:text="${logs.totalPages}">1</span>
-                — <span th:text="${logs.totalElements}">0</span> total events
-            </small>
-            <nav>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item" th:classappend="${!logs.hasPrevious()} ? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/dashboard/admin/audit-logs(page=${logs.number - 1})}">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item" th:classappend="${!logs.hasNext()} ? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/dashboard/admin/audit-logs(page=${logs.number + 1})}">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
     </div>
+
 </div>
 </body>
 </html>

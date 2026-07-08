@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -29,6 +30,8 @@ public class UserResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime lastLoginAt;
+    private LocalDate dateOfBirth;
+    private String location;
 
     public static UserResponse fromUser(User user) {
         return UserResponse.builder()
@@ -40,6 +43,8 @@ public class UserResponse {
                 .role(user.getRole())
                 .phoneNumber(user.getPhoneNumber())
                 .bio(user.getBio())
+                .dateOfBirth(user.getDateOfBirth())
+                .location(user.getLocation())
                 .profilePictureUrl(user.getProfilePictureUrl())
                 .enabled(user.isEnabled())
                 .accountNonLocked(user.isAccountNonLocked())

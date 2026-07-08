@@ -67,6 +67,8 @@ public class AuthService {
                 .email(request.getEmail().toLowerCase().trim())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
+                .dateOfBirth(request.getDateOfBirth())
+                .location(request.getLocation())
                 .build();
         // role defaults to ROLE_USER from @Builder.Default on the entity
 
