@@ -31,6 +31,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+    private final LoginSuccessHandler loginSuccessHandler;
 
     // ── CHAIN 1: Web / Thymeleaf (session-based) ──────────────────
     @Bean
@@ -43,8 +44,7 @@ public class SecurityConfig {
                         "/login", "/logout", "/register",
                         "/forgot-password", "/reset-password",
                         "/dashboard/**",
-                        "/css/**", "/js/**", "/images/**",
-                        "/h2-console/**"
+                        "/css/**", "/js/**", "/images/**"
                 )
                 .csrf(csrf -> csrf.disable())
 
@@ -61,9 +61,6 @@ public class SecurityConfig {
                                 "/images/**"
                         ).permitAll()
 
-                        // H2 console — admin only but permit here,
-                        // protect via URL pattern in prod
-                        .requestMatchers("/h2-console/**").permitAll()
 
                         // Admin dashboard pages
                         .requestMatchers("/dashboard/admin/**")
@@ -94,7 +91,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/dashboard/redirect", true)
+                        .successHandler(loginSuccessHandler)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
@@ -119,9 +116,7 @@ public class SecurityConfig {
                         .accessDeniedPage("/dashboard/access-denied")
                 );
 
-        // Allow H2 console iframe
-        http.headers(h ->
-                h.frameOptions(f -> f.sameOrigin()));
+
 
         return http.build();
     }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -46,6 +47,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // UPDATE queries need @Modifying
     // Without it Spring treats them as SELECT and crashes
     @Modifying
+    @Transactional
     @Query("UPDATE User u SET u.lastLoginAt = :loginTime WHERE u.id = :userId")
     void updateLastLoginAt(@Param("userId") Long userId,
                            @Param("loginTime") LocalDateTime loginTime);
