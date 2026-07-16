@@ -6,7 +6,7 @@
 
     <div class="page-header">
         <h1 class="page-title">Team Users</h1>
-        <p class="page-subtitle">View and promote team members</p>
+        <p class="page-subtitle">View users and manage roles</p>
     </div>
 
     <div class="app-card mb-4">
@@ -27,26 +27,23 @@
             <table class="app-table">
                 <thead>
                 <tr>
-                    <th>User</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>DOB</th>
+                    <th>Location</th>
                     <th>Role</th>
                     <th>Status</th>
-                    <th>Location</th>
-                    <th>Joined</th>
                     <th style="text-align:right;padding-right:20px;">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="user : ${users.content}">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="avatar avatar-sm"
-                                 th:text="${#strings.substring(user.firstName,0,1)+#strings.substring(user.lastName,0,1)}">??</div>
-                            <div>
-                                <div class="fw-600 fs-13" th:text="${user.fullName}">Name</div>
-                                <div style="font-size:11px;color:#9E9E9E;" th:text="${user.email}">email</div>
-                            </div>
-                        </div>
-                    </td>
+                    <td class="fs-13" th:text="${user.firstName}">First</td>
+                    <td class="fs-13" th:text="${user.lastName}">Last</td>
+                    <td class="fs-13" th:text="${user.email}">email</td>
+                    <td class="fs-13" th:text="${user.dateOfBirth != null ? #temporals.format(user.dateOfBirth,'dd MMM yyyy') : '—'}">—</td>
+                    <td class="fs-13" th:text="${user.location != null ? user.location : '—'}">—</td>
                     <td>
                             <span th:switch="${user.role.name()}">
                                 <span th:case="'ROLE_ADMIN'" class="role-badge role-admin">ADMIN</span>
@@ -62,28 +59,37 @@
                                 <span class="status-dot dot-disabled"></span>Disabled
                             </span>
                     </td>
-                    <td class="fs-13" th:text="${user.location != null ? user.location : '—'}">—</td>
-                    <td class="fs-13" style="color:#9E9E9E;" th:text="${#temporals.format(user.createdAt,'dd MMM yyyy')}">—</td>
                     <td style="text-align:right;padding-right:20px;">
                         <div class="d-flex gap-2 justify-content-end">
-                            <form th:if="${user.role.name() == 'ROLE_USER'}"
-                                  th:action="@{/dashboard/manager/users/{id}/promote(id=${user.id})}"
-                                  method="post" class="m-0">
-                                <button type="submit" class="btn-red-outline"
-                                        style="padding:5px 10px;font-size:12px;"
-                                        onclick="return confirm('Promote this user to Manager?')">
-                                    <i class="bi bi-arrow-up-circle"></i>Promote
-                                </button>
-                            </form>
-                            <a th:href="@{/dashboard/manager/audit-logs/{id}(id=${user.id})}"
-                               class="btn-ghost" style="padding:5px 8px;font-size:13px;">
-                                <i class="bi bi-journal-text"></i>
-                            </a>
+
+                            <button type="button" class="btn-ghost" style="padding:5px 10px;font-size:12px;"
+                                    data-bs-toggle="modal" data-bs-target="#userDetailModal"
+                                    th:data-user-firstname="${user.firstName}"
+                                    th:data-user-lastname="${user.lastName}"
+                                    th:data-user-email="${user.email}"
+                                    th:data-user-phone="${user.phoneNumber}"
+                                    th:data-user-dob="${user.dateOfBirth != null ? #temporals.format(user.dateOfBirth,'dd MMM yyyy') : '—'}"
+                                    th:data-user-location="${user.location != null ? user.location : '—'}"
+                                    th:data-user-role="${user.role.name()}"
+                                    th:data-user-status="${user.enabled ? 'Active' : 'Disabled'}">
+                                <i class="bi bi-eye"></i>View
+                            </button>
+
+                            <button type="button" class="btn-red-outline" style="padding:5px 10px;font-size:12px;"
+                                    data-bs-toggle="modal" data-bs-target="#editRoleModal"
+                                    th:data-user-id="${user.id}"
+                                    th:data-user-name="${user.fullName}"
+                                    th:data-user-email="${user.email}"
+                                    th:data-user-phone="${user.phoneNumber}"
+                                    th:data-user-role="${user.role.name()}">
+                                <i class="bi bi-pencil-square"></i>Edit
+                            </button>
+
                         </div>
                     </td>
                 </tr>
                 <tr th:if="${users.content.empty}">
-                    <td colspan="6" style="text-align:center;padding:48px;color:#9E9E9E;">
+                    <td colspan="8" style="text-align:center;padding:48px;color:#9E9E9E;">
                         <i class="bi bi-inbox" style="font-size:40px;display:block;margin-bottom:8px;"></i>
                         No users found
                     </td>
@@ -109,6 +115,116 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Role Modal — Manager cannot assign ADMIN -->
+    <div class="modal fade app-modal" id="editRoleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-gear me-2"></i>Edit User Role</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+                        <div class="avatar avatar-md" id="modalUserAvatar">??</div>
+                        <div>
+                            <div class="fw-700 fs-14" id="modalUserName">-</div>
+                            <div class="fs-13" style="color:#9E9E9E;" id="modalUserEmail">-</div>
+                            <div class="fs-12" style="color:#9E9E9E;" id="modalUserPhone">-</div>
+                        </div>
+                    </div>
+                    <form id="editRoleForm" method="post">
+                        <div class="mb-3">
+                            <label class="form-label-custom">Current Role</label>
+                            <div id="modalCurrentRole" style="padding:9px 13px;background:#F5F5F5;border:1.5px solid #EEE;border-radius:6px;font-size:13.5px;color:#616161;">-</div>
+                        </div>
+                        <div>
+                            <label class="form-label-custom" for="modalRoleSelect">Assign New Role</label>
+                            <select id="modalRoleSelect" name="role" class="form-control-custom">
+                                <option value="ROLE_USER">User — basic access</option>
+                                <option value="ROLE_MANAGER">Manager — team management</option>
+                            </select>
+                            <span class="fs-12" style="color:#9E9E9E;margin-top:6px;display:block;">
+                                <i class="bi bi-info-circle me-1"></i>Managers cannot assign Admin role.
+                            </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-ghost" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i>Cancel</button>
+                    <button type="button" class="btn-red" onclick="submitRoleForm()"><i class="bi bi-check-lg"></i>Save Role</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Detail Modal -->
+    <div class="modal fade app-modal" id="userDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-lines-fill me-2"></i>User Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+                        <div class="avatar avatar-md" id="viewAvatar">??</div>
+                        <div>
+                            <div class="fw-700 fs-14" id="viewName">-</div>
+                            <div class="fs-13" style="color:#9E9E9E;" id="viewEmail">-</div>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Phone</div><div class="fw-600 fs-13" id="viewPhone">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Date of Birth</div><div class="fw-600 fs-13" id="viewDob">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Location</div><div class="fw-600 fs-13" id="viewLocation">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Role</div><div class="fw-600 fs-13" id="viewRole">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Status</div><div class="fw-600 fs-13" id="viewStatus">-</div></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-ghost" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i>Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('editRoleModal').addEventListener('show.bs.modal', function(e) {
+            const btn = e.relatedTarget;
+            const id    = btn.getAttribute('data-user-id');
+            const name  = btn.getAttribute('data-user-name');
+            const email = btn.getAttribute('data-user-email');
+            const phone = btn.getAttribute('data-user-phone');
+            const role  = btn.getAttribute('data-user-role');
+            const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
+            document.getElementById('modalUserAvatar').textContent  = initials;
+            document.getElementById('modalUserName').textContent    = name;
+            document.getElementById('modalUserEmail').textContent   = email;
+            document.getElementById('modalUserPhone').textContent   = phone || 'No phone';
+            document.getElementById('modalCurrentRole').textContent = role.replace('ROLE_','');
+            document.getElementById('modalRoleSelect').value        = (role === 'ROLE_ADMIN') ? 'ROLE_MANAGER' : role;
+            document.getElementById('editRoleForm').action          = `/dashboard/manager/users/${id}/role`;
+        });
+        function submitRoleForm() {
+            document.getElementById('editRoleForm').submit();
+        }
+
+        document.getElementById('userDetailModal').addEventListener('show.bs.modal', function(e) {
+            const btn = e.relatedTarget;
+            const fn = btn.getAttribute('data-user-firstname');
+            const ln = btn.getAttribute('data-user-lastname');
+            const initials = (fn[0] + ln[0]).toUpperCase();
+            document.getElementById('viewAvatar').textContent   = initials;
+            document.getElementById('viewName').textContent     = fn + ' ' + ln;
+            document.getElementById('viewEmail').textContent    = btn.getAttribute('data-user-email');
+            document.getElementById('viewPhone').textContent    = btn.getAttribute('data-user-phone') || 'Not set';
+            document.getElementById('viewDob').textContent      = btn.getAttribute('data-user-dob');
+            document.getElementById('viewLocation').textContent = btn.getAttribute('data-user-location');
+            document.getElementById('viewRole').textContent     = btn.getAttribute('data-user-role').replace('ROLE_','');
+            document.getElementById('viewStatus').textContent   = btn.getAttribute('data-user-status');
+        });
+    </script>
 
 </div>
 </body>

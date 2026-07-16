@@ -27,24 +27,23 @@
             <table class="app-table">
                 <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
                     <th>Email</th>
+                    <th>DOB</th>
+                    <th>Location</th>
                     <th>Role</th>
                     <th>Status</th>
-                    <th>Location</th>
-                    <th>Member Since</th>
+                    <th style="text-align:right;padding-right:20px;">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="user : ${users.content}">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="avatar avatar-sm"
-                                 th:text="${#strings.substring(user.firstName,0,1)+#strings.substring(user.lastName,0,1)}">??</div>
-                            <span class="fw-600 fs-13" th:text="${user.fullName}">Name</span>
-                        </div>
-                    </td>
+                    <td class="fs-13" th:text="${user.firstName}">First</td>
+                    <td class="fs-13" th:text="${user.lastName}">Last</td>
                     <td class="fs-13" th:text="${user.email}">email</td>
+                    <td class="fs-13" th:text="${user.dateOfBirth != null ? #temporals.format(user.dateOfBirth,'dd MMM yyyy') : '—'}">—</td>
+                    <td class="fs-13" th:text="${user.location != null ? user.location : '—'}">—</td>
                     <td>
                             <span th:switch="${user.role.name()}">
                                 <span th:case="'ROLE_ADMIN'" class="role-badge role-admin">ADMIN</span>
@@ -60,11 +59,23 @@
                                 <span class="status-dot dot-disabled"></span>Disabled
                             </span>
                     </td>
-                    <td class="fs-13" th:text="${user.location != null ? user.location : '—'}">—</td>
-                    <td class="fs-13" style="color:#9E9E9E;" th:text="${#temporals.format(user.createdAt,'dd MMM yyyy')}">—</td>
+                    <td style="text-align:right;padding-right:20px;">
+                        <button type="button" class="btn-ghost" style="padding:5px 10px;font-size:12px;"
+                                data-bs-toggle="modal" data-bs-target="#userDetailModal"
+                                th:data-user-firstname="${user.firstName}"
+                                th:data-user-lastname="${user.lastName}"
+                                th:data-user-email="${user.email}"
+                                th:data-user-phone="${user.phoneNumber}"
+                                th:data-user-dob="${user.dateOfBirth != null ? #temporals.format(user.dateOfBirth,'dd MMM yyyy') : '—'}"
+                                th:data-user-location="${user.location != null ? user.location : '—'}"
+                                th:data-user-role="${user.role.name()}"
+                                th:data-user-status="${user.enabled ? 'Active' : 'Disabled'}">
+                            <i class="bi bi-eye"></i>View
+                        </button>
+                    </td>
                 </tr>
                 <tr th:if="${users.content.empty}">
-                    <td colspan="6" style="text-align:center;padding:48px;color:#9E9E9E;">
+                    <td colspan="8" style="text-align:center;padding:48px;color:#9E9E9E;">
                         <i class="bi bi-inbox" style="font-size:40px;display:block;margin-bottom:8px;"></i>
                         No users found
                     </td>
@@ -90,6 +101,54 @@
             </div>
         </div>
     </div>
+
+    <!-- View Detail Modal -->
+    <div class="modal fade app-modal" id="userDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-lines-fill me-2"></i>User Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="background:#FAFAFA;border:1px solid #EEE;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+                        <div class="avatar avatar-md" id="viewAvatar">??</div>
+                        <div>
+                            <div class="fw-700 fs-14" id="viewName">-</div>
+                            <div class="fs-13" style="color:#9E9E9E;" id="viewEmail">-</div>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Phone</div><div class="fw-600 fs-13" id="viewPhone">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Date of Birth</div><div class="fw-600 fs-13" id="viewDob">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Location</div><div class="fw-600 fs-13" id="viewLocation">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Role</div><div class="fw-600 fs-13" id="viewRole">-</div></div>
+                        <div class="col-6"><div class="fs-12" style="color:#9E9E9E;font-weight:600;">Status</div><div class="fw-600 fs-13" id="viewStatus">-</div></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-ghost" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i>Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('userDetailModal').addEventListener('show.bs.modal', function(e) {
+            const btn = e.relatedTarget;
+            const fn = btn.getAttribute('data-user-firstname');
+            const ln = btn.getAttribute('data-user-lastname');
+            const initials = (fn[0] + ln[0]).toUpperCase();
+            document.getElementById('viewAvatar').textContent   = initials;
+            document.getElementById('viewName').textContent     = fn + ' ' + ln;
+            document.getElementById('viewEmail').textContent    = btn.getAttribute('data-user-email');
+            document.getElementById('viewPhone').textContent    = btn.getAttribute('data-user-phone') || 'Not set';
+            document.getElementById('viewDob').textContent      = btn.getAttribute('data-user-dob');
+            document.getElementById('viewLocation').textContent = btn.getAttribute('data-user-location');
+            document.getElementById('viewRole').textContent     = btn.getAttribute('data-user-role').replace('ROLE_','');
+            document.getElementById('viewStatus').textContent   = btn.getAttribute('data-user-status');
+        });
+    </script>
 
 </div>
 </body>

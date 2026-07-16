@@ -62,6 +62,28 @@ public class ManagerWebController {
         return "redirect:/dashboard/manager/users";
     }
 
+    @PostMapping("/users/{userId}/role")
+    public String updateRole(
+            @PathVariable Long userId,
+            @RequestParam String role,
+            @AuthenticationPrincipal User manager,
+            RedirectAttributes redirectAttributes) {
+
+        // Managers can only assign USER or MANAGER — never ADMIN
+        if (!role.equals("ROLE_USER") && !role.equals("ROLE_MANAGER")) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Managers cannot assign the Admin role.");
+            return "redirect:/dashboard/manager/users";
+        }
+
+        UpdateRoleRequest req = new UpdateRoleRequest();
+        req.setRole(Role.valueOf(role));
+        userService.updateUserRole(userId, req, manager.getId(), manager.getEmail());
+
+        redirectAttributes.addFlashAttribute("message", "Role updated successfully.");
+        return "redirect:/dashboard/manager/users";
+    }
+
     @GetMapping("/audit-logs/{userId}")
     public String userLogs(
             @PathVariable Long userId,
